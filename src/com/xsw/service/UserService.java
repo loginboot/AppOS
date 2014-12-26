@@ -48,4 +48,10 @@ public class UserService extends BaseService {
         return userDao.findOne(userId);
     }
 
+    public void saveOrUpdate(User user,int rid){
+        User tmp = userDao.save(user);
+        
+        
+        
+    }
 }
