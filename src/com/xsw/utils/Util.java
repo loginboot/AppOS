@@ -1,13 +1,43 @@
 package com.xsw.utils;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.UUID;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.data.domain.Page;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xsw.constant.Constant;
+import com.xsw.mapper.JsonMapper;
+
+/**
+ * 
+ * @author loginboot.vicp.net
+ * 
+ * @creator xiesw
+ * @version 1.0.0
+ * @date 2014-12-27
+ * @description 系统工具类
+ *
+ */
+
 public class Util {
 
+    /**
+     * 字符串去空格处理
+     * @param val
+     * @return
+     */
     public static String trim(String val) {
         if (val == null) {
             return "";
@@ -15,6 +45,11 @@ public class Util {
         return val.trim();
     }
 
+    /**
+     * 判断字符串是否为空 
+     * @param val
+     * @return
+     */
     public static boolean isEmpty(String val) {
         if ("".equals(Util.trim(val))) {
             return true;
@@ -180,6 +215,157 @@ public class Util {
         } else {
             return sdf.parse(times);
         }
+    }
 
+    /**
+     * 初始化Kendo Grid表格的页码与每页Size
+     * 
+     * @param request
+     */
+    public static void initPage(HttpServletRequest request) {
+        if (request.getAttribute("page") == null) {
+            request.setAttribute("page", "1");
+        }
+        if (request.getAttribute("pageSize") == null) {
+            request.setAttribute("pageSize", Constant.DEFAULT_PAGE_SIZE);
+        }
+    }
+
+    /**
+     * 根据retmsg的错误代码和错误描述组装成json内容
+     * 
+     * @param retmsg HashMap
+     * @return "retmsg":HashMap的json内容
+     */
+    public static String retmsg(HashMap<String, String> retmsg) {
+        ObjectMapper jsonMapper = new ObjectMapper();
+        try {
+            return "\"retmsg\":" + jsonMapper.writeValueAsString(retmsg);
+        } catch (Exception e) {
+            return "\"retmsg\":{\"MSG\":\"convert object to json failed\",\"CODE\":\"MSGCODE.9999\"}";
+        }
+    }
+
+    /**
+     * 根据messageSource、cookie和code获取对应的多语言信息
+     * 
+     * @param ms ResourceBundleMessageSource
+     * @param request HttpServletRequest
+     * @param code String
+     * @return code对应的描述
+     */
+    public static String getMessageByCode(ReloadableResourceBundleMessageSource ms, HttpServletRequest request,
+            String code) {
+        Locale locale = Locale.US;
+        String lang = "en_US";
+        Cookie[] cks = request.getCookies();
+        if (cks != null) {
+            for (int i = 0; i < cks.length; i++) {
+                if (cks[i].getName().indexOf(".LOCALE") > 0)// 获取当前语言
+                {
+                    lang = cks[i].getValue();
+                }
+            }
+        }
+        if ("zh_CN".equalsIgnoreCase(lang)) {
+            locale = Locale.CHINA;
+        } else if ("zh_TW".equalsIgnoreCase(lang)) {
+            locale = Locale.TAIWAN;
+        } else {
+            locale = Locale.US;
+        }
+        return ms.getMessage(code, null, locale);
+    }
+
+    /**
+     * Json格式错误信息输出
+     * 
+     * @param ms ResourceBundleMessageSource
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @param errorcode 错误代码
+     * @throws IOException
+     */
+    public static void writeJsonErrorMsg(ReloadableResourceBundleMessageSource ms, HttpServletRequest request,
+            HttpServletResponse response, String errorcode) throws IOException {
+        HashMap<String, String> retmsg = new HashMap<String, String>();
+        retmsg.put("CODE", errorcode);
+        retmsg.put("MSG", Util.getMessageByCode(ms, request, errorcode));
+        if (!"ERRCODE.1011".equals(errorcode)) {
+            // reallocate the UUID
+            retmsg.put(Constant.UUID_TOKEN, uuid2());
+        }
+        response.setContentType("application/json;charset=utf-8");
+        PrintWriter pw = response.getWriter();
+        pw.write("{" + Util.retmsg(retmsg) + "}");
+        pw.close();
+    }
+
+    /**
+     * 输出成功消息
+     * 
+     * @param ms
+     * @param request
+     * @param response
+     * @param msgcode 消息代码
+     * @return
+     * @throws IOException
+     */
+    public static Object writeJsonSuccMsg(ReloadableResourceBundleMessageSource ms, HttpServletRequest request,
+            HttpServletResponse response, String msgcode) {
+        HashMap<String, String> retmsg = new HashMap<String, String>();
+        retmsg.put("CODE", msgcode);
+        retmsg.put("MSG", Util.getMessageByCode(ms, request, msgcode));
+        // reallocate the
+        retmsg.put(Constant.UUID_TOKEN, uuid2());
+        JsonMapper mapper = new JsonMapper();
+        return mapper.fromJson("{" + Util.retmsg(retmsg) + "}", Object.class);
+    }
+
+    /**
+     * 输出成功消息
+     * 
+     * @param ms
+     * @param request
+     * @param response
+     * @param msgcode 消息代码
+     * @param othermsg
+     * @return
+     * @throws IOException
+     */
+    public static Object writeJsonSuccMsg(ReloadableResourceBundleMessageSource ms, HttpServletRequest request,
+            HttpServletResponse response, String msgcode, String othermsg) {
+        HashMap<String, String> retmsg = new HashMap<String, String>();
+        retmsg.put("CODE", msgcode);
+        retmsg.put("MSG", Util.getMessageByCode(ms, request, msgcode));
+        // reallocate the UUID
+        retmsg.put(Constant.UUID_TOKEN, uuid2());
+        JsonMapper mapper = new JsonMapper();
+        return mapper.fromJson("{" + Util.retmsg(retmsg) + "," + othermsg + "}", Object.class);
+    }
+
+    /**
+     * 分页Json数据返回
+     * 
+     * @param ret
+     * @return json object
+     */
+    public static Object writePagableJson(Page<?> ret) {
+        JsonMapper mapper = new JsonMapper();
+        return mapper.fromJson("{\"total\":" + ret.getTotalElements() + ",\"rows\":" + mapper.toJson(ret.getContent())
+                + "}", Object.class);
+    }
+
+    /**
+     * 分布Json数据输出带参数
+     * 
+     * @param ret
+     * @param othermsg
+     * @return
+     */
+    public static Object writePagableJson(Page<?> ret, String othermsg) {
+        JsonMapper mapper = new JsonMapper();
+        return mapper.fromJson("{\"total\":" + ret.getTotalElements() + ",\"rows\":" + mapper.toJson(ret.getContent())
+                + "," + othermsg + "}", Object.class);
     }
 }
