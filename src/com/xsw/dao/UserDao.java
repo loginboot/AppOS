@@ -27,4 +27,9 @@ public interface UserDao extends PagingAndSortingRepository<User, Integer>, JpaS
     @Modifying
     @Query("update User u set u.status=?2, u.lockReason=?3 where u.loginName=?1")
     void saveUserStatusToLockAndLockReason(String loginName, int lock, int i);
+    
+    // 根据应用ID及登录名称返回用户信息
+    @Query("from User where appList.appId=?1 and loginName=?2")
+    User findByAppIdAndLoginName(int appId,String loginName);
+    
 }
