@@ -6,6 +6,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -18,7 +20,10 @@ import org.springframework.data.domain.Page;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xsw.constant.Constant;
+import com.xsw.ctx.MenuCtx;
 import com.xsw.mapper.JsonMapper;
+import com.xsw.model.Menu;
+import com.xsw.model.Params;
 
 /**
  * 
@@ -265,7 +270,61 @@ public class Util {
             return sdf.parse(times);
         }
     }
+    
+    /**
+     * 将List<Menu>转换为有层次结构的List<MenuCtx>
+     * 
+     * @param menus
+     * @return
+     */
+    public static List<MenuCtx> convertMenusToMenuCtxs(List<Menu> menus) {
+        HashMap<Integer, MenuCtx> maps = new HashMap<Integer, MenuCtx>();
+        // 将Menu解析为层次结构
+        for (Menu me : menus) {
+            MenuCtx mc = new MenuCtx(me);// 生成MenuCtx
+            if (me.getMid() != me.getPid())// 非父节点
+            {
+                MenuCtx pmc = maps.get(me.getPid());// 获取父节
+                if (pmc != null)// 如果父节点为空，则子节点也无权限
+                {
+                    mc.setParent(pmc);
+                    pmc.addChildMenuCtx(mc);
+                    maps.put(me.getMid(), mc);
+                }
+            } else
+            // 父节点
+            {
+                maps.put(me.getMid(), mc);
+            }
+        }
+        // 将root菜单节点返回
+        List<MenuCtx> lst = new LinkedList<MenuCtx>();
+        for (Menu me : menus) {
+            if (me.getDepth() == 0)// root结点
+            {
+                lst.add(maps.get(me.getMid()));
+            }
+        }
+        return lst;
+    }
 
+    
+    /**
+     * 获取指定参数和名称的参数值
+     * 
+     * @param params
+     * @param paramName
+     * @return
+     */
+    public static String getAppParamValue(List<Params> params, String paramName) {
+        for (Params p : params) {
+            if (paramName.equals(p.getName())) {
+                return p.getValue();
+            }
+        }
+        return "";
+    }
+    
     /**
      * 初始化Kendo Grid表格的页码与每页Size
      * 
