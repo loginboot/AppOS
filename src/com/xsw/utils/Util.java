@@ -2,6 +2,7 @@ package com.xsw.utils;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -338,6 +339,18 @@ public class Util {
             request.setAttribute("pageSize", Constant.DEFAULT_PAGE_SIZE);
         }
     }
+    
+    /**
+     * 以字符串形式返回异常堆栈信息
+     * 
+     * @param e
+     * @return 异常堆栈信息字符串
+     */
+    public static String getStackTrace(Exception e) {
+        StringWriter writer = new StringWriter();
+        e.printStackTrace(new PrintWriter(writer, true));
+        return writer.toString();
+    }
 
     /**
      * 根据retmsg的错误代码和错误描述组装成json内容
@@ -401,6 +414,30 @@ public class Util {
         retmsg.put("MSG", Util.getMessageByCode(ms, request, errorcode));
         if (!"ERRCODE.1011".equals(errorcode)) {
             // reallocate the UUID
+            retmsg.put(Constant.UUID_TOKEN, uuid2());
+        }
+        response.setContentType("application/json;charset=utf-8");
+        PrintWriter pw = response.getWriter();
+        pw.write("{" + Util.retmsg(retmsg) + "}");
+        pw.close();
+    }
+    
+    /**
+     * Json格式错误信息输出
+     * 
+     * @param ms ResourceBundleMessageSource
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @param errorcode 错误代码
+     * @param extendMsg 补充信息
+     * @throws IOException
+     */
+    public static void writeJsonErrorMsg(ReloadableResourceBundleMessageSource ms, HttpServletRequest request,
+            HttpServletResponse response, String errorcode, String extendMsg) throws IOException {
+        HashMap<String, String> retmsg = new HashMap<String, String>();
+        retmsg.put("CODE", errorcode);
+        retmsg.put("MSG", Util.getMessageByCode(ms, request, errorcode) + "[" + extendMsg + "]");
+        if (!"ERRCODE.1011".equals(errorcode)) {
             retmsg.put(Constant.UUID_TOKEN, uuid2());
         }
         response.setContentType("application/json;charset=utf-8");

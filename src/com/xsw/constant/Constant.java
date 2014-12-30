@@ -18,6 +18,9 @@ public class Constant {
 
     // 密码最大失败参数名称
     public static final String PARAM_PASSWORD_MAXFAILTIMES = "PWDMAXFAILTIMES";
+    
+    // 系统应用Session名称
+    public static final String SESSION_APP_LIST = "SESSION_APP_LIST";
 
     // 默认系统Session超时时间
     public static final long DEFAULT_SESSION_TIMEOUT = 30;

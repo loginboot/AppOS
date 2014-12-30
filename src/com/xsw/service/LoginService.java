@@ -63,6 +63,23 @@ public class LoginService {
         log.debug("loading main app info:[" + app + "]...");
         return app;
     }
+    
+    /**
+     * 返回所有正常的应用列表數據
+     * @return
+     */
+    public List<AppList> findAllApp(){
+        return appListDao.findByStatus(Status.NORMAL);
+    }
+    
+    /**
+     * 根据应用ID返回登录的应用数据
+     * @param appId
+     * @return
+     */
+    public AppList findByAppId(int appId){
+        return appListDao.findOne(appId);
+    }
 
     /**
      * 登陆用户信息返回
