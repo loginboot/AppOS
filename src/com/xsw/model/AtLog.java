@@ -13,6 +13,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -57,6 +59,7 @@ public class AtLog extends AbstractEntity implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "APP_ID")
+    @NotFound(action = NotFoundAction.IGNORE)
     public AppList getAppList() {
         return appList;
     }

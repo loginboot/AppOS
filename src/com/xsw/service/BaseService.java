@@ -8,6 +8,7 @@ import com.xsw.utils.DynamicSpecifications;
 import com.xsw.utils.SearchFilter;
 
 public class BaseService {
+    
     /**
      * 创建动态查询条件组合.
      */

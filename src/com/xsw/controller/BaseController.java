@@ -26,4 +26,14 @@ public class BaseController {
     protected AppCtx appctx;
 
     protected JsonMapper mapper = new JsonMapper();
+    // 成功返回信息标识码
+    protected static String MSG_SUCCESS = "MSGCODE.0000";
+    // 系统操作 - 新增
+    protected static String ACTION_ADD = "add";
+    // 系统操作 - 修改
+    protected static String ACTION_UPD = "upd";
+    // 系统操作 - 查看
+    protected static String ACTION_VIEW = "view";
+    // 系统操作 - 锁定
+    protected static String ACTION_DISABLED = "disabled='disabled'";
 }
