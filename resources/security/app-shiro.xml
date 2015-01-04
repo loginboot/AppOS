@@ -12,22 +12,8 @@
 	</bean>
 
 	<!-- 項目自定义的Realm -->
-	<bean id="shiroDbRealm" class="com.lyods.security.ShiroDbRealm">
-		<property name="accountService" ref="accountService"/>
-	</bean>
-	
-	<!-- LDAP 数据源配置  -->
-	<bean id="contextFactory" class="org.apache.shiro.realm.ldap.JndiLdapContextFactory">
-	    <property name="url" value="ldap://localhost:389" />
-		<property name="systemUsername" value="cn=it.wlb.com,dc=fircouatsvc" />
-		<property name="systemPassword" value="abcd!234"/>
-	</bean>
-	
-	<!-- 項目自定义的LDAP Realm -->
-	<bean id="shiroLdapRealm" class="com.lyods.security.ShiroLdapRealm">
-		<property name="accountService" ref="accountService"/>
-		<property name="rootDN" value="ou=LVW,dc=fircouatsvc" />
-		<property name="contextFactory" ref="contextFactory" />
+	<bean id="shiroDbRealm" class="com.xsw.security.ShiroDbRealm">
+		<property name="loginService" ref="loginService"/>
 	</bean>
 	
 	<!-- Shiro Filter -->

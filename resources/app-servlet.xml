@@ -10,17 +10,17 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
     
     <!-- 自动扫描@Controller -->
-    <context:component-scan base-package="com.lyods.controller"/>
+    <context:component-scan base-package="com.xsw.controller"/>
     <aop:config>
       <aop:aspect id="logAspect" ref="logAspectBean" order="2">
-        <aop:pointcut id="logPointCut" expression="execution(* com.lyods.controller.*.*(..))"/>
+        <aop:pointcut id="logPointCut" expression="execution(* com.xsw.controller.*.*(..))"/>
         <!--aop:pointcut id="logPointCut" expression="execution(* com.lyods.controller.*.*(..))"/ -->
         <aop:before pointcut-ref="logPointCut" method="beforeHandler"/>
         <aop:after-returning pointcut-ref="logPointCut" returning="retval" method="afterHandler"/>        
       </aop:aspect>
     </aop:config>
-    <bean id="logAspectBean" class="com.lyods.aspect.LogAspect"/>
-    <bean id="handleInterceptor" class="com.lyods.interceptor.HandleInterceptor"/>
+    <bean id="logAspectBean" class="com.xsw.aspect.LogAspect"/>
+    <bean id="handleInterceptor" class="com.xsw.interceptor.HandleInterceptor"/>
     <!-- i18n bundle -->
     <!-- see void org.springframework.context.support.ReloadableResourceBundleMessageSource.setCacheSeconds(int cacheSeconds)
     javadoc -->
@@ -28,9 +28,9 @@
         class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basenames">
 		  <list>
-		    <value>classpath:i18/messages</value>
-		    <value>classpath:i18/codemsg</value>
-		    <value>classpath:i18/menus</value>
+		    <value>classpath:i18n/messages</value>
+		    <value>classpath:i18n/codemsg</value>
+		    <value>classpath:i18n/menus</value>
 		  </list>
 		</property>	
 		<property name="cacheSeconds" value="0"/>
@@ -73,7 +73,7 @@
     
     <mvc:resources mapping="/statics/**" location="/statics/" />
     <mvc:resources mapping="/upload/**" location="/upload/"/>
-	<mvc:resources mapping="/templates/**" location="/templates/"/>
+	<mvc:resources mapping="/tmpl/**" location="/tmpl/"/>
 	
     <!--
     <mvc:resources mapping="/statics/**" location="/statics/**" cache-period="31556926"/>  
@@ -87,8 +87,8 @@
 	</bean>
 	
 	<!-- Views -->
-	<bean id="excelViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver">
+	<!-- <bean id="excelViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver">
       <property name="order" value="1"/>
-      <property name="location" value="classpath:lyods-views.xml"/>
-    </bean>
+      <property name="location" value="classpath:app-views.xml"/>
+    </bean> -->
 </beans>

@@ -16,13 +16,13 @@
 	<description>Spring Common Configuration</description>
 
     <!-- 自动扫描@Service,@Entity -->
-	<context:component-scan base-package="com.lyods.service" /> 	
-    <context:component-scan	base-package="com.lyods.model" />
+	<context:component-scan base-package="com.xsw.service" /> 	
+    <context:component-scan	base-package="com.xsw.model" />
     <!-- 启用基于注解的配置 --> 
 	<context:annotation-config/> 
 	
 	<!-- Email template -->
-	<bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+	<!-- <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
       <property name="velocityProperties">
 	    <props>
 	      <prop key="resource.loader">class</prop>
@@ -31,15 +31,6 @@
 	      </prop>
 	    </props>
 	  </property>
-    </bean>
-	<!-- 日志记录公用模块 -->
-	<bean id="historyLog" class="com.lyods.security.HistoryLog" depends-on="histMainDao,histFieldsDao"/>
-	
-    <!-- file upload -->
-  <!--   <bean id="multipartResolver" 
-     class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-     one of the properties available; the maximum file size in bytes 1GB
-     <property name="maxUploadSize" value="1000000000"/>
     </bean> -->
     
 	<!-- Jpa Entity Manager 配置 -->
@@ -48,20 +39,20 @@
 		<property name="jpaVendorAdapter" ref="hibernateJpaVendorAdapter"/>
 		<property name="packagesToScan">
 		 <list>
-		    <value>com.lyods.model</value>
+		    <value>com.xsw.model</value>
 		 </list>
 		</property>		
 	</bean>	
 	<bean id="hibernateJpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
 		<property name="databasePlatform">
-			<bean factory-method="getDialect" class="org.springside.modules.persistence.Hibernates">
+			<bean factory-method="getDialect" class="com.xsw.utils.Hibernates">
 				<constructor-arg ref="dataSource"/>
 			</bean>
 		</property>
 	</bean>
     <!-- Spring Data Jpa配置 -->
-    <jpa:repositories base-package="com.lyods.dao"  transaction-manager-ref="txManager" entity-manager-factory-ref="entityManagerFactory"/>
-    <bean id="jdbcDao" class="com.lyods.dao.JdbcDao">
+    <jpa:repositories base-package="com.xsw.dao"  transaction-manager-ref="txManager" entity-manager-factory-ref="entityManagerFactory"/>
+    <bean id="jdbcDao" class="com.xsw.dao.JdbcDao">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
@@ -88,7 +79,7 @@
     <!-- ensure that the above transactional advice runs for any execution Spring Framework 3.1 Reference Documentation 313
      of an operation defined by the FooService interface -->
     <aop:config>
-      <aop:pointcut id="txPointCut" expression="execution(* com.lyods.service.*.*(..))"/>
+      <aop:pointcut id="txPointCut" expression="execution(* com.xsw.service.*.*(..))"/>
       <aop:advisor advice-ref="txAdvice" pointcut-ref="txPointCut" order="1"/>   
     </aop:config> 
 	
@@ -98,15 +89,13 @@
 	<!-- production环境 -->
  	<beans profile="production">
  		<!-- 对JDBC配置进行解密  --> 
-	    <bean id="JDBCPwdEncryptor" class="com.lyods.security.JDBCPwdEncryptor">  
+	    <bean id="JdbcPwdEncryptor" class="com.xsw.security.JdbcPwdEncryptor">  
 	           <property name="locations">
 	               <list>
-	                   <value>classpath*:/jdbc-mysql.properties</value>
+	                   <value>classpath*:/jdbc.properties</value>
 	               </list>
 	           </property>
 	    </bean>
- 		<!-- <context:property-placeholder ignore-unresolvable="true"
-			location="classpath*:/jdbc.properties" /> -->			
 		<!-- 数据源配置, 使用DBCP数据库连接池 -->
 		<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 			<!-- Connection Info -->
