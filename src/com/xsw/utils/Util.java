@@ -1,23 +1,33 @@
 package com.xsw.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
+import java.util.Vector;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.domain.Page;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xsw.constant.Constant;
@@ -25,6 +35,7 @@ import com.xsw.ctx.MenuCtx;
 import com.xsw.mapper.JsonMapper;
 import com.xsw.model.Menu;
 import com.xsw.model.Params;
+import com.xsw.model.User;
 
 /**
  * 
@@ -38,6 +49,10 @@ import com.xsw.model.Params;
  */
 
 public class Util {
+    /**
+     * 日志
+     */
+    private final static Logger log = Logger.getLogger(Util.class);
 
     /**
      * 字符串去空格处理
@@ -126,6 +141,18 @@ public class Util {
      * @return yyyy-MM-dd HH:mm:ss.SSSSSS
      */
     public static String timeStampToStr(Date time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
+        return sdf.format(time);
+    }
+
+    /**
+     * 时间戳转换为字符串
+     * 
+     * @param time Date
+     * @return yyyy-MM-dd HH:mm:ss.SSSSSS
+     */
+    public static String timeStampToStr() {
+        Date time = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
         return sdf.format(time);
     }
@@ -271,7 +298,111 @@ public class Util {
             return sdf.parse(times);
         }
     }
-    
+
+    /**
+     * Convert byte[] to hex
+     * string.这里我们可以将byte转换成int，然后利用Integer.toHexString(int)来转换成16进制字符串。
+     * 
+     * @param src byte[] data
+     * 
+     * @return hex string
+     */
+    public static String bytesToHexString(byte[] src) {
+        StringBuilder stringBuilder = new StringBuilder("");
+        if (src == null || src.length <= 0) {
+            return null;
+        }
+        for (int i = 0; i < src.length; i++) {
+            int v = src[i] & 0xFF;
+            String hv = Integer.toHexString(v);
+            if (hv.length() < 2) {
+                stringBuilder.append(0);
+            }
+            stringBuilder.append(hv);
+        }
+        return stringBuilder.toString();
+    }
+
+    /**
+     * Convert hex string to byte[]
+     * 
+     * @param hexString the hex string
+     * @return byte[]
+     */
+    public static byte[] hexStringToBytes(String hexString) {
+        if (hexString == null || hexString.equals("")) {
+            return null;
+        }
+        hexString = hexString.toUpperCase();
+        int length = hexString.length() / 2;
+        char[] hexChars = hexString.toCharArray();
+        byte[] d = new byte[length];
+        for (int i = 0; i < length; i++) {
+            int pos = i * 2;
+            d[i] = (byte) (charToByte(hexChars[pos]) << 4 | charToByte(hexChars[pos + 1]));
+        }
+        return d;
+    }
+
+    /**
+     * Convert char to byte
+     * 
+     * @param c char
+     * @return byte
+     */
+    private static byte charToByte(char c) {
+        return (byte) "0123456789ABCDEF".indexOf(c);
+    }
+
+    /**
+     * 生成压缩后的search parameters
+     * 
+     * @param request
+     * @param map
+     * @param prefix
+     */
+    public static void storeSearchKeyValue(HttpServletRequest request, Map<String, Object> map, String prefix) {
+        String pfix = Util.trim(prefix);
+        Map<String, Object> nmap = new HashMap<String, Object>();
+        if (Util.isEmpty(pfix)) {
+            for (String key : map.keySet()) {
+                nmap.put(key, map.get(key));
+            }
+        } else {
+            for (String key : map.keySet()) {
+                if ("page".equals(key) || "pageSize".equals(key) || "rows".equals(key)) {
+                    nmap.put(key, map.get(key));
+                } else {
+                    nmap.put(pfix + key, map.get(key));
+                }
+            }
+        }
+        String contextPath = request.getContextPath();
+        String absolutePath = request.getRequestURI();
+        String relativePath = absolutePath.substring(contextPath.length() + 1);// 获取相对路径
+        getShiroSession().setAttribute(Constant.SEARCH_KEY + "_" + relativePath, ZipUtil.zipobj(nmap));
+    }
+
+    /**
+     * 获取当前操作用户
+     * 
+     * @return User
+     */
+    public static User getCurrentUser() {
+        Subject currentUser = SecurityUtils.getSubject();
+        return (User) currentUser.getPrincipal();
+    }
+
+    /**
+     * 获取当前操作Session
+     * 
+     * @return User
+     */
+    public static Session getShiroSession() {
+        Subject currentUser = SecurityUtils.getSubject();
+        return currentUser.getSession();
+    }
+
     /**
      * 将List<Menu>转换为有层次结构的List<MenuCtx>
      * 
@@ -309,7 +440,6 @@ public class Util {
         return lst;
     }
 
-    
     /**
      * 获取指定参数和名称的参数值
      * 
@@ -325,7 +455,7 @@ public class Util {
         }
         return "";
     }
-    
+
     /**
      * 初始化Kendo Grid表格的页码与每页Size
      * 
@@ -339,7 +469,7 @@ public class Util {
             request.setAttribute("pageSize", Constant.DEFAULT_PAGE_SIZE);
         }
     }
-    
+
     /**
      * 以字符串形式返回异常堆栈信息
      * 
@@ -421,7 +551,7 @@ public class Util {
         pw.write("{" + Util.retmsg(retmsg) + "}");
         pw.close();
     }
-    
+
     /**
      * Json格式错误信息输出
      * 
@@ -512,5 +642,70 @@ public class Util {
         JsonMapper mapper = new JsonMapper();
         return mapper.fromJson("{\"total\":" + ret.getTotalElements() + ",\"rows\":" + mapper.toJson(ret.getContent())
                 + "," + othermsg + "}", Object.class);
+    }
+
+    /**
+     * 将Valid的错误信息与JSON格式返回到终端
+     * 
+     * @param ms
+     * @param request
+     * @param response
+     * @param result
+     * @return
+     */
+    public static Object writeJsonValidErrorMsg(ReloadableResourceBundleMessageSource ms, HttpServletRequest request,
+            HttpServletResponse response, BindingResult result) {
+        HashMap<String, Object> retmsg = new HashMap<String, Object>();
+        retmsg.put("CODE", "ERRCODE.9000");// Validation Error
+        retmsg.put("MSG", Util.getMessageByCode(ms, request, "ERRCODE.9000"));
+        // reallocate the
+        retmsg.put(Constant.UUID_TOKEN, uuid2());
+        // Global Error
+        Vector<String> gErrs = new Vector<String>();
+        if (result.getGlobalErrorCount() > 0) {
+            for (ObjectError err : result.getGlobalErrors()) {
+                gErrs.add(Util.getMessageByCode(ms, request, err.getDefaultMessage()));
+            }
+        }
+        retmsg.put("GLOBAL", gErrs);
+        // Fields Error
+        retmsg.put("FIELDERRS", result.getFieldErrors());
+
+        JsonMapper mapper = new JsonMapper();
+        try {
+            return mapper.fromJson("{\"retmsg\":" + mapper.toJson(retmsg) + "}", Object.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return mapper.fromJson(
+                    "{\"retmsg\":{\"MSG\":\"convert object to json failed\",\"CODE\":\"MSGCODE.9999\"}}", Object.class);
+        }
+    }
+
+    /**
+     * 删除指定目录中超过指定天数的文件
+     * 
+     * @param dir 要操作的目录
+     * @param days 要删除文件超过指定天数
+     */
+    public static void deleteFileByDays(String dir, int days) {
+        Calendar cal = Calendar.getInstance();
+        File file = new File(dir);
+        if (file.exists())// 首先判断是否存在
+        {
+            if (file.isDirectory())// 是目录
+            {
+                File[] list = file.listFiles();
+                for (File sf : list) {
+                    deleteFileByDays(sf.getAbsolutePath(), days);
+                }
+            } else if (file.isFile())// 是文件
+            {
+                cal.setTimeInMillis(file.lastModified());
+                cal.add(Calendar.DATE, days);
+                if (cal.getTime().compareTo(new Date()) < 0) {
+                    log.debug("Delete file:" + file.getAbsolutePath() + "--" + file.delete());
+                }
+            }
+        }
     }
 }

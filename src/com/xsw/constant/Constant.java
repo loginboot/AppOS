@@ -22,6 +22,9 @@ public class Constant {
     // 系统应用Session名称
     public static final String SESSION_APP_LIST = "SESSION_APP_LIST";
 
+    // 系统菜单Session名称
+    public static final String USER_ROOT_MENU_CTX = "CURRENT_USER_ROOT_MENUCTX";
+
     // 默认系统Session超时时间
     public static final long DEFAULT_SESSION_TIMEOUT = 30;
 
@@ -46,6 +49,12 @@ public class Constant {
 
     // UUID 生成名称
     public final static String UUID_TOKEN = "_UUID_TOKEN";
+    
+    // random validate code in session key
+    public static final String RANDOMCODEKEY = "RANDOMVALIDATECODEKEY";
+    
+    // Search Key
+    public static final String SEARCH_KEY = "_SEARCH_KEY_PARAM";
 
     // 错误日志记录request键值
     public static final String HANDLE_EXCEPTION = "HANDLE_EXCEPTION";

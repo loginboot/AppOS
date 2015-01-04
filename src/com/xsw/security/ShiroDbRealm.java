@@ -54,6 +54,10 @@ public class ShiroDbRealm extends AuthorizingRealm {
     @Autowired
     private LoginService loginService;
 
+    public void setLoginService(LoginService loginService) {
+        this.loginService = loginService;
+    }
+
     /**
      * 用于存储该用户的角色和功能权限 授权查询回调函数, 进行鉴权且缓存中无用户的授权信息时调用.
      */
