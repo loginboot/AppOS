@@ -13,7 +13,14 @@ body{font-size:12px;padding-bottom:35px;font-family:Arial,'微软雅黑', Helvet
 ul li{list-style: none;}
 
 /**
-** LYODS MENU CSS
+** APPOS HEADER CSS
+**/
+.aps-index{width: 1000px;margin: 0 auto;margin-top: 15px;text-align: center;}
+.aps-footer{position: fixed;left:0px;right:0px;bottom:0px;;line-height: 25px;text-align: center;border-top: 2px solid #57CF23;background: #fdfdfc;}
+/***END HEADER CSS***/
+
+/**
+** APPOS MENU CSS
 **/
 .aps-header{background: #4A99FD url("img/menu_bg.png");position: relative;}
 .aps-menu{color:#FFF; border-top-width: 1px; font-size: 14px;}
@@ -35,3 +42,4 @@ margin-top: .3em\9;margin-top: .3em\11;margin-bottom:.3em\9;margin-bottom:.3em\1
 .aps-btn-login{background-image: url("img/login_btn.png");}
 .aps-btn-setting{background-image: url("img/setting_btn.png");}
 /***END MENU CSS***/
+
