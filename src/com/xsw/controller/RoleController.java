@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -13,12 +14,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.xsw.exception.AppException;
 import com.xsw.model.Role;
+import com.xsw.model.User;
 import com.xsw.service.RoleService;
 import com.xsw.utils.Servlets;
 import com.xsw.utils.Util;
@@ -73,6 +78,30 @@ public class RoleController extends BaseController {
         return Util.writePagableJson(ls);
     }
 
+    /**
+     * ajax检测角色信息是否已经存在
+     * @param name
+     * @param rid
+     * @return
+     */
+    @RequestMapping(value = "/role/checkRole.do", method = RequestMethod.POST)
+    @ResponseBody
+    @RequiresPermissions("system-role")
+    public Object checkRole(@RequestParam("name") String name, @RequestParam(value = "rid", defaultValue = "0") int rid) {
+        User user = Util.getCurrentUser();
+        boolean isExist = roleService.isExistRole(user.getAppList().getAppId(), rid, name);
+        log.debug("check role for rid:[" + rid + "],name:[" + name + "],exist:[" + isExist + "]...");
+        if (isExist) {
+            return "false";
+        }
+        return "true";
+    }
+
+    /**
+     * 跳转到角色新增页面
+     * @param model
+     * @return
+     */
     @RequestMapping(value = "/role/add.do", method = RequestMethod.GET)
     @RequiresPermissions("system-role-add")
     public String getAddForm(Model model) {
@@ -81,8 +110,133 @@ public class RoleController extends BaseController {
         model.addAttribute("action", ACTION_ADD);
         return "system/roleForm";
     }
-    
-    
-    
+
+    /**
+     * 角色新增
+     * @param request
+     * @param response
+     * @param role
+     * @param result
+     * @return
+     */
+    @RequestMapping(value = "/role/add.do", method = RequestMethod.POST)
+    @ResponseBody
+    @RequiresPermissions("system-role-add")
+    public Object addForm(HttpServletRequest request, HttpServletResponse response, @Valid Role role,
+            BindingResult result) {
+        // 检测角色是否已经存在
+        boolean isExist = roleService.isExistRole(role.getAppList().getAppId(), role.getRid(), role.getName());
+        if (isExist) {
+            result.addError(new ObjectError("GLOBAL", "ERRCODE.1013"));
+        }
+
+        if (result.hasErrors()) {
+            return Util.writeJsonValidErrorMsg(messageSource, request, response, result);
+        }
+
+        String[] mids = request.getParameterValues("mid");
+        User user = Util.getCurrentUser();
+        role.setCreateDate(Util.timeStampToStr());
+        role.setCreatorUser(user);
+        role.setLastModifyDate(Util.timeStampToStr());
+        role.setModifierUser(user);
+        //save
+        roleService.saveOrUpdate(role, mids);
+
+        return Util.writeJsonSuccMsg(messageSource, request, response, MSG_SUCCESS);
+    }
+
+    /**
+     * 跳转到角色修改页面
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/role/upd/{id}.do", method = RequestMethod.GET)
+    @RequiresPermissions("system-role-upd")
+    public String getUpdForm(Model model, @RequestParam("id") int rid) {
+        Role role = roleService.findOne(rid);
+        model.addAttribute("role", role);
+        model.addAttribute("action", ACTION_UPD);
+        return "system/roleForm";
+    }
+
+    /**
+     * 角色信息修改
+     * @param request
+     * @param response
+     * @param role
+     * @param result
+     * @return
+     */
+    @RequestMapping(value = "/role/upd.do", method = RequestMethod.POST)
+    @ResponseBody
+    @RequiresPermissions("system-role-upd")
+    public Object updForm(HttpServletRequest request, HttpServletResponse response, @Valid Role role,
+            BindingResult result) {
+        // 角色最后更新比较
+        Role old = roleService.findOne(role.getRid());
+        if (old == null) {
+            result.addError(new ObjectError("GLOBAL", "ERRCODE.1013"));
+        } else if (role.getLastModifyDate().compareTo(old.getLastModifyDate()) != 0) {
+            result.addError(new ObjectError("GLOBAL", "ERRCODE.1013"));
+        }
+
+        // 检测角色是否已经存在
+        boolean isExist = roleService.isExistRole(role.getAppList().getAppId(), role.getRid(), role.getName());
+        if (isExist) {
+            result.addError(new ObjectError("GLOBAL", "ERRCODE.1013"));
+        }
+
+        if (result.hasErrors()) {
+            return Util.writeJsonValidErrorMsg(messageSource, request, response, result);
+        }
+
+        String[] mids = request.getParameterValues("mid");
+        User user = Util.getCurrentUser();
+        role.setCreateDate(old.getCreateDate());
+        role.setCreatorUser(old.getCreatorUser());
+        role.setLastModifyDate(Util.timeStampToStr());
+        role.setModifierUser(user);
+        //save
+        roleService.saveOrUpdate(role, mids);
+
+        return Util.writeJsonSuccMsg(messageSource, request, response, MSG_SUCCESS);
+    }
+
+    /**
+     * 删除角色信息
+     * @param request
+     * @param response
+     * @param rid
+     * @return
+     * @throws AppException
+     */
+    @RequestMapping(value = "/role/del.do", method = RequestMethod.POST)
+    @ResponseBody
+    @RequiresPermissions("system-role-del")
+    public Object delForm(HttpServletRequest request, HttpServletResponse response, @RequestParam("rid") int rid)
+            throws AppException {
+        try {
+            roleService.delete(rid);
+        } catch (Exception e) {
+            throw new AppException("ERRCODE.2201");
+        }
+        return Util.writeJsonSuccMsg(messageSource, request, response, MSG_SUCCESS);
+    }
+
+    /**
+     * 跳转到角色查看页面
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/role/view/{id}.do", method = RequestMethod.GET)
+    @RequiresPermissions("system-role")
+    public String getViewForm(Model model, @RequestParam("id") int rid) {
+        Role role = roleService.findOne(rid);
+        model.addAttribute("role", role);
+        model.addAttribute("action", ACTION_VIEW);
+        model.addAttribute("disabled", ACTION_DISABLED);
+        return "system/roleForm";
+    }
 
 }

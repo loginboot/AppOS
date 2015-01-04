@@ -3,6 +3,7 @@ package com.xsw.controller;
 import javax.annotation.Resource;
 
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.stereotype.Controller;
 
 import com.xsw.ctx.AppCtx;
 import com.xsw.mapper.JsonMapper;
@@ -17,7 +18,7 @@ import com.xsw.mapper.JsonMapper;
  * @description 公用控制层类
  *
  */
-
+@Controller
 public class BaseController {
     @Resource
     protected ReloadableResourceBundleMessageSource messageSource;

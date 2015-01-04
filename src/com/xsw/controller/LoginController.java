@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -16,15 +17,18 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.xsw.aspect.AppLog;
 import com.xsw.constant.Constant;
 import com.xsw.ctx.AppListCtx;
+import com.xsw.ctx.MenuCtx;
 import com.xsw.exception.AppException;
 import com.xsw.model.AppList;
 import com.xsw.model.Params;
+import com.xsw.model.User;
 import com.xsw.security.AppAuthToken;
 import com.xsw.service.LoginService;
+import com.xsw.utils.Util;
 
 /**
  * 
@@ -58,11 +62,19 @@ public class LoginController extends BaseController {
     @RequestMapping(value = "/login.htm", method = RequestMethod.GET)
     public String login(HttpServletRequest request, ModelMap model) throws AppException {
         Subject currentUser = SecurityUtils.getSubject();
-
+        if (currentUser != null) {
+            model.addAttribute("rememberMe", currentUser.isRemembered());
+        }
+        if (currentUser != null && currentUser.isRemembered()) {
+            User user = (User) currentUser.getPrincipal();
+            model.addAttribute("username", user.getLoginName());
+        }
+        if (currentUser != null) {
+            currentUser.logout();
+        }
         // 应用系统列表
         List<AppList> applst = loginService.findAllApp();
         model.addAttribute("applst", applst);
-
         return "system/login";
     }
 
@@ -95,10 +107,10 @@ public class LoginController extends BaseController {
         //应用查询
         AppList app = loginService.findByAppId(appId);
         List<Params> plst = loginService.getAppParams(appId);
-        AppListCtx appCtx = new AppListCtx();
-        appCtx.setAppList(app);
-        appCtx.setParams(plst);
-        request.getSession().setAttribute(Constant.SESSION_APP_LIST, appCtx);
+        AppListCtx actx = new AppListCtx();
+        actx.setAppList(app);
+        actx.setParams(plst);
+        request.getSession().setAttribute(Constant.SESSION_APP_LIST, actx);
 
         log.info(username + " *** login post *** isRemembered:" + rememberMe);
         AppAuthToken token = new AppAuthToken(app.getAppId(), username, password, rememberMe);
@@ -110,6 +122,47 @@ public class LoginController extends BaseController {
 
         }
 
+        if (!isOk) {
+            model.addAttribute(FormAuthenticationFilter.DEFAULT_USERNAME_PARAM, userName);
+            return "/login";
+        }
+        long stimeout = Constant.DEFAULT_SESSION_TIMEOUT;
+        String spto = Util.getAppParamValue(actx.getParams(), Constant.PARAM_SESSION_TIMEOUT);
+        if (!Util.isEmpty(spto)) {
+            stimeout = Long.parseLong(Util.getAppParamValue(actx.getParams(), Constant.PARAM_SESSION_TIMEOUT));
+        }
+        // 获取用户菜单对象
+        User user = (User) currentUser.getPrincipal();
+        List<MenuCtx> rootMenuCtx = loginService.getRootMenuCtx(user.getUserId());
+        currentUser.getSession().setTimeout(stimeout * 60000);
+        // 将Root MenuCtx放入Session
+        currentUser.getSession().setAttribute(Constant.USER_ROOT_MENU_CTX, rootMenuCtx);
+        loginService.loginSuccessful(actx.getAppList().getAppId(), user.getLoginName(), (String) currentUser
+                .getSession().getId());
         return "redirect:/" + app.getUrlName();
+    }
+
+    /**
+     * 用户登出
+     * 
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/logout.do")
+    @AppLog(details = "Logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        Subject currentUser = SecurityUtils.getSubject();
+        String idxUrl = "";
+        if (SecurityUtils.getSubject().getSession() != null) {
+            if (Util.getCurrentUser() != null && Util.getShiroSession() != null) {
+                request.setAttribute("LOGIN_NAME", Util.getCurrentUser().getLoginName());
+                idxUrl = Util.getCurrentUser().getAppList().getUrlName();
+                loginService.logoutSuccessful(Util.getCurrentUser().getUserId(), (String) Util.getShiroSession()
+                        .getId());
+            }
+            currentUser.logout();
+        }
+        return "redirect:/" + idxUrl;
     }
 }

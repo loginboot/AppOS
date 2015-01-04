@@ -57,7 +57,7 @@ public class AtLogController extends BaseController{
         log.debug("get atlog list for url:[atlog.do]...");
         // 初始化分页信息
         Util.initPage(request);
-        return "system/user";
+        return "system/atlog";
     }
 
     /**

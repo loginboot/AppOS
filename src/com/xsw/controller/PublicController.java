@@ -47,18 +47,18 @@ public class PublicController {
      */
     @RequestMapping("/index.htm")
     public String index(HttpServletRequest request,Model model) {
-        AppListCtx appCtx = (AppListCtx) request.getSession().getAttribute(Constant.SESSION_APP_LIST);
-        if (appCtx == null || appCtx.getAppList()  == null) {
+        AppListCtx actx = (AppListCtx) request.getSession().getAttribute(Constant.SESSION_APP_LIST);
+        if (actx == null || actx.getAppList()  == null) {
             log.debug("loading system app list...");
             AppList app = loginService.findSystemApp();
             List<Params> params = loginService.getAppParams(app.getAppId());
-            appCtx = new AppListCtx();
-            appCtx.setAppList(app);
-            appCtx.setParams(params);
-            model.addAttribute(Constant.SESSION_APP_LIST, appCtx);
-            request.getSession().setAttribute(Constant.SESSION_APP_LIST, appCtx);
+            actx = new AppListCtx();
+            actx.setAppList(app);
+            actx.setParams(params);
+            model.addAttribute(Constant.SESSION_APP_LIST, actx);
+            request.getSession().setAttribute(Constant.SESSION_APP_LIST, actx);
         }
-        log.info("index AppList:" + appCtx);
+        log.info("index AppList:" + actx);
         return "index";
     }
     
