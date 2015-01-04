@@ -21,8 +21,8 @@ import com.xsw.model.User;
 public interface UserDao extends PagingAndSortingRepository<User, Integer>, JpaSpecificationExecutor<User> {
 
     // 返回用户条数判断用户是否已经存在
-    @Query("select count(userId) from User where client.cid=?1 and userId!=?2 and loginName=?3")
-    int findByUserForExists(int cid, int userId, String loginName);
+    @Query("select count(userId) from User where appList.appId=?1 and userId!=?2 and loginName=?3")
+    int findByUserForExists(int appId, int userId, String loginName);
 
     @Modifying
     @Query("update User u set u.status=?2, u.lockReason=?3 where u.loginName=?1")

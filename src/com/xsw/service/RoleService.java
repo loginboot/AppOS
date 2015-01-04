@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
 import com.xsw.dao.RoleDao;
 import com.xsw.dao.RoleMenuDao;
@@ -30,6 +31,7 @@ import com.xsw.model.RoleMenu;
  *
  */
 
+@Service
 public class RoleService extends BaseService {
     /**
      * 日志
@@ -68,6 +70,21 @@ public class RoleService extends BaseService {
      */
     public Role findOne(int rid) {
         return roleDao.findOne(rid);
+    }
+
+    /**
+     * 判断角色名称是否重名
+     * @param appId
+     * @param rid
+     * @param name
+     * @return
+     */
+    public boolean isExistRole(int appId, int rid, String name) {
+        int count = roleDao.findByAppIdAndName(appId, rid, name);
+        if (count > 0) {
+            return true;
+        }
+        return false;
     }
 
     /**

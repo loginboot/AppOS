@@ -1,5 +1,7 @@
 package com.xsw.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -13,7 +15,21 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.xsw.dao.AppListDao;
+import com.xsw.dao.AppMenuDao;
 import com.xsw.model.AppList;
+import com.xsw.model.AppMenu;
+import com.xsw.model.Menu;
+
+/**
+ * 
+ * @author loginboot.vicp.net
+ * 
+ * @creator xiesw  
+ * @version 1.0.0
+ * @date 2015-01-04
+ * @description 系统应用 - 服务操作
+ *
+ */
 
 @Service
 public class AppListService extends BaseService {
@@ -25,6 +41,9 @@ public class AppListService extends BaseService {
 
     @Resource
     private AppListDao appListDao;
+
+    @Resource
+    private AppMenuDao appMenuDao;
 
     /**
      * 根据查询条件进行系统应用列表
@@ -45,16 +64,48 @@ public class AppListService extends BaseService {
         return appListDao.findAll((Specification<AppList>) buildSpecification(search, AppList.class), pageRequest);
     }
 
+    /**
+     * 返回一条应用信息
+     * @param appId
+     * @return
+     */
     public AppList findOne(int appId) {
         return appListDao.findOne(appId);
     }
 
+    /**
+     * 新增或修改应用信息
+     * @param app
+     * @param mids
+     */
     public void saveOrUpdate(AppList app, String[] mids) {
-
+        log.debug("save or update app info:[" + app + "]...");
+        AppList tmp = appListDao.save(app);
+        if (app.getAppId() != 0) {
+            appMenuDao.deleteByAppId(app.getAppId());
+        }
+        if (mids != null) {
+            List<AppMenu> amlst = new ArrayList<AppMenu>();
+            for (String mid : mids) {
+                AppMenu am = new AppMenu();
+                Menu m = new Menu();
+                m.setMid(Integer.parseInt(mid));
+                am.setMenu(m);
+                am.setAppList(tmp);
+                amlst.add(am);
+            }
+            appMenuDao.save(amlst);
+        }
     }
 
+    /**
+     * 删除应用记录
+     * @param appId
+     */
     public void delete(int appId) {
-
+        log.debug("delete app for appId[" + appId + "]...");
+        appMenuDao.deleteByAppId(appId);
+        appListDao.delete(appId);
     }
 
 }
