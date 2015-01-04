@@ -1,0 +1,37 @@
+/**
+** @author loginboot.vicp.net
+**
+** @creator xiesw
+** @version 1.0.0
+** @date 2015-01-04
+** @description 综合应用样式表
+**
+**/
+
+*{margin:0px; padding: 0px}
+body{font-size:12px;padding-bottom:35px;font-family:Arial,'微软雅黑', Helvetica, sans-serif;}
+ul li{list-style: none;}
+
+/**
+** LYODS MENU CSS
+**/
+.aps-header{background: #4A99FD url("img/menu_bg.png");position: relative;}
+.aps-menu{color:#FFF; border-top-width: 1px; font-size: 14px;}
+.aps-menu-li{display: inline-block;*display: inline;position: relative;border-left: 1px solid #CCC;margin-top: .3em;margin-bottom:.3em;padding: .3em;
+margin-top: .3em\9;margin-top: .3em\11;margin-bottom:.3em\9;margin-bottom:.3em\10;}
+.aps-menu-li i{margin-left: 2px;}
+.aps-menu-li a{text-decoration: none;}
+.aps-menu-home{margin-left: 160px;}
+.aps-menu-sub{display: none;vertical-align: middle;border: 1px solid #94C0D2;box-shadow:-1px 1px 5px #EEE;padding: 0px;background-color: #FFF;}
+.aps-menu-sub li {line-height: 20px;}
+.aps-menu-sub li a{white-space: nowrap;padding: .1em .8em;display: block;color:#003F59;}
+.aps-menu-li:HOVER .aps-menu-sub{display: block;position: absolute;z-index: 99999;left: -1px;*top:20px;}
+.aps-menu-sub li a:HOVER,.aps-menu-li:HOVER{cursor: pointer;background: #57CF23 url("img/highlight.png");color:#003F59; }
+.aps-menu-default{border-width: 0px;}
+.aps-menu-default:HOVER{background: none;cursor: default;}
+.aps-navbar{vertical-align: middle;}
+.aps-btn-login,.aps-btn-setting{background-repeat: no-repeat;border: none;text-align: center;min-width: 75px;vertical-align:middle;
+	line-height: 26px;display: inline-block;text-decoration: none;color: #fff;margin-top: -9px;margin-bottom: -6px;}
+.aps-btn-login{background-image: url("img/login_btn.png");}
+.aps-btn-setting{background-image: url("img/setting_btn.png");}
+/***END MENU CSS***/
