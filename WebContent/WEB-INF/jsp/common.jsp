@@ -24,14 +24,30 @@
 <!-- lyods ui -->
 <link href="${ctx}/statics/<spring:theme code="mainstyle.css"/>" type="text/css" rel="stylesheet" />
 
+<!-- JQUERY -->
+<script type="text/javascript" src="${ctx }/statics/jquery/jquery-1.11.0.min.js"></script>
+<!-- KENOD UI -->
+<script type="text/javascript" src="${ctx }/statics/kendo/kendo.web.min.js"></script>
+<!-- JQUERY UI -->
+<script type="text/javascript" src="${ctx }/statics/jquery/jqueryui/jquery-ui.min.js"></script>
+<!-- jquery tmpl  -->
+<script src="${ctx}/statics/jquery/jquery.tmpl.js" type="text/javascript"></script>
+<!-- date time pick -->
+<script src="${ctx}/statics/jquery/jqueryui/jquery-ui-timepicker-addon.js" type="text/javascript"></script>
+
+<script src="${ctx}/statics/jquery/jquery.cookie.js" type="text/javascript"></script>
+<script src="${ctx}/statics/jquery/jquery.form.js" type="text/javascript"></script>
+<script src="${ctx}/statics/jquery/validation/jquery.validate.min.js" type="text/javascript"></script>
+<script src="${ctx}/statics/js/AppOS.js" type="text/javascript"></script>
+<script src="${ctx}/statics/js/json2.js" type="text/javascript"></script>
 
 <%
     String locale = "en_US";
     if (request.getCookies() != null) {
         for (Cookie ck : request.getCookies()) {
-            if ("org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE".equals(ck.getName())) {
-                locale = ck.getValue();
-            }
+    if ("org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE".equals(ck.getName())) {
+        locale = ck.getValue();
+    }
         }
     }
 
@@ -43,3 +59,31 @@
     //获取AppCtx
     appctx = (AppCtx) webctx.getBean("appctx");
 %>
+
+<script type="text/javascript">
+/**
+ * Ajaxa Error Function
+ * @param jqXHR
+ * @param textStatus
+ * @param errorThrown
+ */
+function appAjaxError(jqXHR, textStatus, errorThrown){			
+	//No response
+	if(jqXHR.readyState<4){
+		alert('<spring:message code="ERRCODE.9999"/>,error:<spring:message code="ERRCODE.9990"/>,status:'+textStatus);
+		//has error
+	}else{
+		alert('<spring:message code="PUB.error"/>,error:'+jqXHR.responseText);
+	}
+}
+/**
+ * check if return json format data
+ */
+function appCheckJsonData(data){
+	if(JSON.stringify(data).indexOf("\"retmsg\":")<0 && JSON.stringify(data).indexOf("\\\"retmsg\\\":")<0){
+		alert('<spring:message code="PUB.error"/>:'+JSON.stringify(data));
+		return false;
+	}
+	return true;
+}
+</script>
