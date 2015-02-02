@@ -75,7 +75,7 @@ public class LoginController extends BaseController {
         // 应用系统列表
         List<AppList> applst = loginService.findAllApp();
         model.addAttribute("applst", applst);
-        return "system/login";
+        return "login";
     }
 
     /**
@@ -119,7 +119,7 @@ public class LoginController extends BaseController {
             currentUser.login(token);
             isOk = true;
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
 
         if (!isOk) {

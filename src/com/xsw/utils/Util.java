@@ -680,6 +680,16 @@ public class Util {
                     "{\"retmsg\":{\"MSG\":\"convert object to json failed\",\"CODE\":\"MSGCODE.9999\"}}", Object.class);
         }
     }
+    
+    /**
+     * 设定安全的密码，生成随机的salt并经过1024次 sha-1 hash
+     */
+    public static void entryptPassword(User user, String plainPwd) {
+        byte[] salt = Digests.generateSalt(Constant.SALT_SIZE);
+        user.setSalt(Encodes.encodeHex(salt));
+        byte[] hashPassword = Digests.sha1(plainPwd.getBytes(), salt, Constant.HASH_INTERATIONS);
+        user.setPassword(Encodes.encodeHex(hashPassword));
+    }
 
     /**
      * 删除指定目录中超过指定天数的文件

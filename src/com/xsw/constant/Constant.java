@@ -34,6 +34,9 @@ public class Constant {
     // 是大用户现线数
     public static final String MAX_ONLINE_USER = "MAXONLINEUSER";
 
+    // 异或码长度
+    public static final int SALT_SIZE = 8;
+
     // 密码超过有效期
     public static final Integer USER_PWD_HAS_EXPIRED = 2;
 
@@ -43,16 +46,28 @@ public class Constant {
     // 用户失效提前提醒天数
     public static final String PWD_FAIL_ADVANCE_DAYS = "PWD_FAIL_ADVANCE_DAYS";
     public static final int DEFAULT_PWD_FAIL_ADVANCE_DAYS = 5;
+    // 账户超过登录最小到期天数
+    public static final Integer USER_ACCOUNT_EXPIRE = 3;
+    // 密码最小长度
+    public static final String PWD_MIN_LENGTH = "PWD_MIN_LENGTH";
+    // 最少字母个数
+    public static final String PWD_MIN_ALPHA_CHAR = "PWD_MIN_ALPHA_CHAR";
+    // 最少数字个数
+    public static final String PWD_MIN_NUM_CHAR = "PWD_MIN_NUM_CHAR";
+    // 最少特殊字符个数
+    public static final String PWD_MIN_SPECIAL_CHAR = "PWD_MIN_SPECIAL_CHAR";
+    // 必须包括大小写
+    public static final String PWD_CONTAIN_UPPER_CHAR = "PWD_CONTAIN_UPPER_CHAR";
 
     // 系统默认分页条数
     public final static int DEFAULT_PAGE_SIZE = 10;
 
     // UUID 生成名称
     public final static String UUID_TOKEN = "_UUID_TOKEN";
-    
+
     // random validate code in session key
     public static final String RANDOMCODEKEY = "RANDOMVALIDATECODEKEY";
-    
+
     // Search Key
     public static final String SEARCH_KEY = "_SEARCH_KEY_PARAM";
 

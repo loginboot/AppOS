@@ -17,5 +17,9 @@ public interface RoleDao extends PagingAndSortingRepository<Role, Integer>, JpaS
     // 判断相同应用是否有相同角色名称
     @Query("select count(*) from Role where appList.appId=?1 and rid!=?2 and name=?3")
     int findByAppIdAndName(int appId, int rid, String name);
+    
+    // 根据应用ID返回对应角色
+    @Query("from Role where appList.appId=?1 order by name")
+    List<Role> findByAppId(int appId);
 
 }

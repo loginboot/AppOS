@@ -1,6 +1,7 @@
 package com.xsw.controller;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -16,12 +17,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.xsw.constant.ExpStatusEnum;
+import com.xsw.model.Role;
 import com.xsw.model.User;
 import com.xsw.service.UserService;
 import com.xsw.utils.Servlets;
@@ -87,6 +91,27 @@ public class UserController extends BaseController {
         // 返回JSON数据
         return Util.writePagableJson(ls);
     }
+    
+    /**
+     * 检查用户登陆名称是否已经存在
+     * 
+     * @param loginName
+     * @param uId
+     * @return
+     */
+    @RequestMapping(value = "/user/checkUserName.do")
+    @ResponseBody
+    @RequiresAuthentication
+    public String checkUserName(@RequestParam("loginName") String loginName,
+            @RequestParam(value = "userId", defaultValue = "0") int userId) {
+        User user = Util.getCurrentUser();
+        log.debug("....checkUserName(" + loginName + "," + userId + ")-");
+        if (userService.isExistUser(user.getAppList().getAppId(), Util.trim(loginName), userId)) { // 存在則報錯
+            return "false";
+        } else {
+            return "true";
+        }
+    }
 
     /**
      * 跳转到用户新增页面
@@ -96,9 +121,17 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/user/add.do", method = RequestMethod.GET)
     @RequiresPermissions("system-user-add")
     public String getAddForm(Model model) {
-        User user = new User();
-        user.setLastModifyDate(Util.timeStampToStr(new Date()));
-        model.addAttribute("user", user);
+        Date curDate = new Date();
+        User newUser = new User();
+        User currUser = Util.getCurrentUser();
+        newUser.setLastModifyDate(Util.timeStampToStr(curDate));
+        newUser.setModifierUser(currUser);
+        newUser.setAppList(currUser.getAppList());
+
+        List<Role> roles = userService.findAppRole(currUser.getAppList().getAppId());
+        model.addAttribute("user", newUser);
+        model.addAttribute("roles", roles);
+        model.addAttribute("statusMap", ExpStatusEnum.statusMap);
         model.addAttribute("action", ACTION_ADD);
         return "system/userForm";
     }
@@ -114,12 +147,27 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/user/add.do", method = RequestMethod.POST)
     @ResponseBody
     @RequiresPermissions("system-user-add")
-    public Object addForm(HttpServletRequest request, HttpServletResponse response, @Valid User user,
-            BindingResult result) {
+    public Object addForm(HttpServletRequest request, HttpServletResponse response, @RequestParam("rid") int rid,
+            @Valid User user, BindingResult result) {
+
+        User curUser = Util.getCurrentUser();
+        // check user has same login name for same client
+        if (userService.isExistUser(curUser.getAppList().getAppId(), user.getLoginName(), user.getUserId())) {
+            result.addError(new ObjectError("GLOBAL", "ERRCODE.1013"));
+        }
 
         if (result.hasErrors()) {
-
+            return Util.writeJsonValidErrorMsg(messageSource, request, response, result);
         }
+
+        User currUser = Util.getCurrentUser();
+        user.setCreatorUser(currUser);
+        user.setCreateDate(Util.timeStampToStr());
+        user.setModifierUser(currUser);
+        user.setLastModifyDate(Util.timeStampToStr());
+
+        //save 
+        userService.saveOrUpdate(user, rid);
 
         return Util.writeJsonSuccMsg(messageSource, request, response, MSG_SUCCESS);
     }

@@ -1,5 +1,6 @@
 package com.xsw.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,11 +15,13 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.xsw.dao.RoleDao;
 import com.xsw.dao.UserDao;
 import com.xsw.dao.UserRoleDao;
 import com.xsw.model.Role;
 import com.xsw.model.User;
 import com.xsw.model.UserRole;
+import com.xsw.utils.Util;
 
 @Service
 public class UserService extends BaseService {
@@ -32,6 +35,9 @@ public class UserService extends BaseService {
 
     @Resource
     private UserRoleDao userRoleDao;
+    
+    @Resource
+    private RoleDao roleDao;
 
     /**
      * 根据查询条件进行系统用户列表
@@ -61,6 +67,33 @@ public class UserService extends BaseService {
     public User findOne(int userId) {
         return userDao.findOne(userId);
     }
+    
+    /**
+     * 检测系统用户登录名称是否已经存在
+     * 
+     * @param cid
+     * @param loginName
+     * @param userId
+     * @return
+     */
+    public boolean isExistUser(int appId, String loginName, int userId) {
+        int count = userDao.findByUserForExists(appId, userId, loginName);
+        if (count > 0) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * 根据应用ID获取所有ROLE
+     * 
+     * @param cid
+     * @return
+     */
+    public List<Role> findAppRole(int appId) {
+        return roleDao.findByAppId(appId);
+    }
+
 
     /**
      * 保存用户信息同时保存用户与角色关联信息
@@ -82,6 +115,26 @@ public class UserService extends BaseService {
         role.setRid(rid);
         ur.setRole(role);
         ur.setUser(tmp);
+    }
+    
+    /**
+     * 用户重置密码
+     * 
+     * @param user
+     * @param plainPwd
+     */
+    public void resetPassword(User user, String plainPwd) {
+        Util.entryptPassword(user, plainPwd);
+        userDao.save(user);
+        // send email to notify
+        if (!Util.isEmpty(user.getEmail())) {
+            log.debug("...reset password for user email is:[" + user.getEmail() + "]...");
+            HashMap<String, Object> model = new HashMap<String, Object>();
+            model.put("userName", user.getName());
+            model.put("loginName", user.getLoginName());
+            model.put("newpassword", plainPwd);
+          //  emailSender.sendEmail(model, "resetpwd", user.getEmail());
+        }
     }
 
     /**

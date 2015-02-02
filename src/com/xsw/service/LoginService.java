@@ -52,6 +52,7 @@ public class LoginService {
     @Resource
     private ParamsDao paramsDao;
 
+    @Resource
     private AtSessionDao atSessionDao;
 
     /**
