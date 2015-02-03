@@ -23,8 +23,8 @@ ul li{list-style: none;}
 ** APPOS MENU CSS
 **/
 .aps-header{background: #4A99FD url("img/menu_bg.png");position: relative;}
-.aps-menu{color:#FFF; border-top-width: 1px; font-size: 14px;}
-.aps-menu-li{display: inline-block;*display: inline;position: relative;border-left: 1px solid #CCC;margin-top: .3em;margin-bottom:.3em;padding: .3em;
+.aps-menu{color:#FFF; border-top-width: 1px; font-size: 12px;}
+.aps-menu-li{display: inline-block;*display: inline;position: relative;border-left: 1px solid #CCC;margin-top: .5em;margin-bottom:.5em;padding: .3em;
 margin-top: .3em\9;margin-top: .3em\11;margin-bottom:.3em\9;margin-bottom:.3em\10;}
 .aps-menu-li i{margin-left: 2px;}
 .aps-menu-li a{text-decoration: none;}
@@ -38,8 +38,63 @@ margin-top: .3em\9;margin-top: .3em\11;margin-bottom:.3em\9;margin-bottom:.3em\1
 .aps-menu-default:HOVER{background: none;cursor: default;}
 .aps-navbar{vertical-align: middle;}
 .aps-btn-login,.aps-btn-setting{background-repeat: no-repeat;border: none;text-align: center;min-width: 75px;vertical-align:middle;
-	line-height: 26px;display: inline-block;text-decoration: none;color: #fff;margin-top: -9px;margin-bottom: -6px;}
+	line-height: 26px;display: inline-block;text-decoration: none;color: #fff;margin-top: -9px;margin-bottom: -6px;background-size: 100% 100%;}
 .aps-btn-login{background-image: url("img/login_btn.png");}
 .aps-btn-setting{background-image: url("img/setting_btn.png");}
 /***END MENU CSS***/
 
+
+/**
+** LODIN CSS
+**/
+.aps-login{position: relative;min-height:400px;width: 600px;margin: 0 auto;margin-top: 30px;background-image: url("img/login_bg.jpg");
+background-repeat: no-repeat;background-size: 100% 100%;border-radius: 2px; box-shadow: 1px 1px 10px #1C7703;
+ }
+.aps-login-body{position: fixed;top: 0px;left:0px;right:0px;bottom: 0px;z-index: -1;background-size: 100% 90px;
+	background-image: url("img/login_body.gif");background-repeat: repeat-y;}
+.aps-login-opa{position: absolute;width: 310px;height: 205px;top:165px;left:150px;border-radius: 5px;
+	background-color: #efefef;opacity: 0.7;z-index: 15;}
+.aps-login-form{position: absolute;top:165px;left:150px;padding: 20px;z-index: 25;}
+.aps-login-form input[type='text'],.aps-login-form input[type='password']{height: 30px;border-radius: 4px;border: 1px solid #CCC;
+	width: 265px;text-indent: 5px;color: #3399FF}
+.aps-login-form input[type='checkbox']{vertical-align: middle;}
+.aps-login-form p{color: #686868;line-height: 24px;}
+.aps-login-form div{position: relative;}
+.aps-login-action{text-align: right;}
+.aps-login-btn{color: #686868;line-height:20px;padding: .2em;border: 1px solid #CDCDCD;border-radius:5px;
+background: -webkit-linear-gradient(top,#bbb,#FDFDFD,#bbb);}
+.aps-login-btn:hover{cursor: pointer;box-shadow: 1px 1px 10px #bbb;background: -webkit-linear-gradient(top,#eee,#FDFDFD,#eee);}
+.aps-login label.error{position: absolute;left:15%;bottom:-25px;z-index: 888;}
+.aps-login label.error i{left:45%;top:-5px;}
+/**END LOGIN CSS**/
+
+/**
+** VALID CSS
+**/
+label.error{display:inline-block;position:relative;padding:0 .3em;margin-left:7px;;line-height: 20px;background-color: #942724;
+border-radius:2px;color: #FFF; box-shadow: 3px 5px 10px #888;white-space:nowrap;}
+label.error:hover{cursor: pointer;}
+label.error i{display: inline-block;position: absolute;width: 9px;height: 9px;background-image: url("img/valid_bg.gif");
+background-repeat: no-repeat;left:-5px;top:25%;}
+/**END VALID CSS***/
+
+/**
+** KENDO CSS
+**/
+.k-header.k-window-titlebar{background-color: #007F00;color:#fff;}
+div.k-window,.k-window.k-state-focused{border-color:#007F00; }
+.k-window a.k-state-hover{background-color: #6BD53C;border:none;}
+
+/**
+** FORM CSS
+**/
+.aps-form{}
+.aps-fieldset{
+	border: 1px solid #95C37C;border-radius:4px;padding: .3em;color: #007F00;
+}
+.aps-rows{margin-top: 5px;}
+.aps-label{display: inline-block;width: 120px;text-align: right;color: #007F00;}
+.aps-textbox{height: 22px;border-radius:4px;border: 1px solid #95C37C;text-indent: 5px;}
+.aps-action{padding-left: 123px;margin-top: 5px;}
+.aps-button{border-radius:4px;background-color: #EFEFEF;border:1px solid #98CC66;padding: .3em;color:#007F00;}
+.aps-button:hover{cursor: pointer;background-color: #FFF;}
