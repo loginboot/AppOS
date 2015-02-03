@@ -93,6 +93,20 @@ public class UserService extends BaseService {
     public List<Role> findAppRole(int appId) {
         return roleDao.findByAppId(appId);
     }
+    
+    /**
+     * 返回一条用户与角色关联信息
+     * @param id
+     * @return
+     */
+    public UserRole findUserRoleById(int id){
+        List<UserRole> urlst = userRoleDao.findByUser_userId(id);
+        if(urlst.size()!=0){
+            return urlst.get(0);
+        }
+        return null;
+    }
+    
 
 
     /**
@@ -115,6 +129,16 @@ public class UserService extends BaseService {
         role.setRid(rid);
         ur.setRole(role);
         ur.setUser(tmp);
+    }
+    
+    /**
+     * 单独更新用户信息
+     * 
+     * @param user
+     */
+    public void update(User user, int type) {
+        log.debug("...update user for name is:" + user.getName());
+        userDao.save(user);
     }
     
     /**

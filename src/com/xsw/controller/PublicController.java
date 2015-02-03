@@ -85,6 +85,15 @@ public class PublicController {
     }
 
     /**
+     * 跳转到BBS后台主页面
+     * @return
+     */
+    @RequestMapping("/bbs/index.htm")
+    public String indexToBbs() {
+        return "/bbs/index";
+    }
+
+    /**
      * 跳转到错误页面
      * 
      * @return

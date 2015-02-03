@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -54,6 +55,8 @@ public class Util {
      */
     private final static Logger log = Logger.getLogger(Util.class);
 
+    private static SecureRandom random = new SecureRandom();
+    
     /**
      * 字符串去空格处理
      * @param val
@@ -83,6 +86,15 @@ public class Util {
      */
     public static String uuid2() {
         return UUID.randomUUID().toString().replaceAll("-", "");
+    }
+    
+    /**
+     * 基于Base62编码的SecureRandom随机生成bytes.
+     */
+    public static String randomBase62(int length) {
+        byte[] randomBytes = new byte[length];
+        random.nextBytes(randomBytes);
+        return Encodes.encodeBase62(randomBytes);
     }
 
     /**
@@ -689,6 +701,18 @@ public class Util {
         user.setSalt(Encodes.encodeHex(salt));
         byte[] hashPassword = Digests.sha1(plainPwd.getBytes(), salt, Constant.HASH_INTERATIONS);
         user.setPassword(Encodes.encodeHex(hashPassword));
+    }
+    
+    /**
+     * 进行密码加密处理
+     * 
+     * @param plainPwd 原始密码
+     * @param salt 干扰码HEX编码
+     * @return
+     */
+    public static String entryptPassword(String plainPwd, String salt) {
+        byte[] hashPassword = Digests.sha1(plainPwd.getBytes(), Encodes.decodeHex(salt), Constant.HASH_INTERATIONS);
+        return Encodes.encodeHex(hashPassword);
     }
 
     /**

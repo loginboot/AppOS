@@ -14,6 +14,8 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.xsw.constant.Type;
+import com.xsw.dao.MenuDao;
 import com.xsw.dao.RoleDao;
 import com.xsw.dao.RoleMenuDao;
 import com.xsw.model.Menu;
@@ -43,6 +45,9 @@ public class RoleService extends BaseService {
 
     @Resource
     private RoleMenuDao roleMenuDao;
+    
+    @Resource
+    private MenuDao menuDao;
 
     /**
      * 根据查询条件进行系统角色列表
@@ -70,6 +75,24 @@ public class RoleService extends BaseService {
      */
     public Role findOne(int rid) {
         return roleDao.findOne(rid);
+    }
+    
+    /**
+     * 
+     * 根据客户类型查找对应的菜单
+     * 
+     * @param sysId
+     * @return
+     */
+    public List<Menu> getMenuBySysOrNor(int sysId, int appId) {
+        List<Menu> mlist = null;
+        // 系统
+        if (sysId == Type.APP_SYSINT) {
+            mlist = menuDao.findSystemMenu();
+        } else { // 客户
+            mlist = menuDao.findAppMenuAppId(appId);
+        }
+        return mlist;
     }
 
     /**

@@ -1,5 +1,9 @@
 package com.xsw.controller;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -21,7 +25,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.xsw.ctx.MenuCtx;
 import com.xsw.exception.AppException;
+import com.xsw.model.Menu;
 import com.xsw.model.Role;
 import com.xsw.model.User;
 import com.xsw.service.RoleService;
@@ -105,7 +111,12 @@ public class RoleController extends BaseController {
     @RequestMapping(value = "/role/add.do", method = RequestMethod.GET)
     @RequiresPermissions("system-role-add")
     public String getAddForm(Model model) {
+        Date curDate = new Date();
+        User user = Util.getCurrentUser();
         Role role = new Role();
+        role.setLastModifyDate(Util.timeStampToStr(curDate));
+        // 菜单处理
+        parseMenuCtx(user.getAppList().getType(),user.getAppList().getAppId(),model);
         model.addAttribute("role", role);
         model.addAttribute("action", ACTION_ADD);
         return "system/roleForm";
@@ -155,6 +166,10 @@ public class RoleController extends BaseController {
     @RequiresPermissions("system-role-upd")
     public String getUpdForm(Model model, @RequestParam("id") int rid) {
         Role role = roleService.findOne(rid);
+        
+        // 菜单处理
+        parseMenuCtx(role.getAppList().getType(),role.getAppList().getAppId(),model);
+        
         model.addAttribute("role", role);
         model.addAttribute("action", ACTION_UPD);
         return "system/roleForm";
@@ -237,6 +252,27 @@ public class RoleController extends BaseController {
         model.addAttribute("action", ACTION_VIEW);
         model.addAttribute("disabled", ACTION_DISABLED);
         return "system/roleForm";
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void parseMenuCtx(int type,int appId,Model model){
+        List<Menu> mlist = roleService.getMenuBySysOrNor(type,appId);
+        List<String> syslst = (List<String>)appctx.getObjParam("SystemOS");
+        Map<String,List<MenuCtx>> mctxMap = new LinkedHashMap<String, List<MenuCtx>>();
+        for(String str : syslst){
+            String[] valArr = str.split("\\|");
+            int maxId = Integer.parseInt(valArr[1]);
+            List<Menu> tmlst = new ArrayList<Menu>();
+            for(Menu m : mlist){
+                if(m.getMid()<maxId){
+                    tmlst.add(m);
+                }
+            }
+            // 解析菜单层次
+            List<MenuCtx> menuCtx = Util.convertMenusToMenuCtxs(tmlst);
+            mctxMap.put(valArr[2], menuCtx);
+        }
+       model.addAttribute("mctxMap", mctxMap);
     }
 
 }

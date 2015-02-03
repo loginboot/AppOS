@@ -24,6 +24,14 @@
 		</property>
 		<property name="objparams">
 			<map>
+			    <!-- 综合信息菜单设计 -->
+			    <entry key="systemOS">
+			        <list>
+			            <value>1000|50999|PUB.generalSystem</value>
+			            <value>51000|100999|PUB.bbs</value>
+			            <value>101000|150999|PUB.pro</value>
+			        </list>
+			    </entry>
 				<!-- language -->
 				<entry key="lang">
 					<list>

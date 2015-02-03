@@ -41,6 +41,7 @@ public class AppList extends AbstractEntity implements Serializable {
     private String engName;
     private String displayName;
     private String urlName;
+    private int type;
     private String remark;
     private int status;
 
@@ -97,6 +98,15 @@ public class AppList extends AbstractEntity implements Serializable {
 
     public void setUrlName(String urlName) {
         this.urlName = urlName;
+    }
+
+    @Column(name = "TYPE")
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     @Column(name = "REMARK")
