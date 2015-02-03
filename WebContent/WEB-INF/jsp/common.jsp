@@ -31,7 +31,7 @@
 <!-- JQUERY UI -->
 <script type="text/javascript" src="${ctx }/statics/jquery/jqueryui/jquery-ui.min.js"></script>
 <!-- jquery tmpl  -->
-<script src="${ctx}/statics/jquery/jquery.tmpl.js" type="text/javascript"></script>
+<script src="${ctx}/statics/jquery/jquery.tmpl.min.js" type="text/javascript"></script>
 <!-- date time pick -->
 <script src="${ctx}/statics/jquery/jqueryui/jquery-ui-timepicker-addon.js" type="text/javascript"></script>
 
@@ -86,4 +86,31 @@ function appCheckJsonData(data){
 	}
 	return true;
 }
+
+/**
+ * Ajax check
+ * @param data
+ * @reture false.failed true.success
+ */
+function appAjaxCheck(data,form,mainForm){
+	if(!appCheckJsonData(data)){
+		return false;
+	}	
+	if(data.retmsg.CODE.substring(0,7)=="ERRCODE"){
+		
+	}
+	
+	//uuid
+  	if(data.retmsg._UUID_TOKEN!=null){
+  		$("#_UUID_TOKEN").val(data.retmsg._UUID_TOKEN);
+  		$("input[name='_UUID_TOKEN']").val(data.retmsg._UUID_TOKEN);
+  	}
+	return true;
+}
+
+//处理from数据信息
+function appErrorData(data,form){
+	
+}
+
 </script>
