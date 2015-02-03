@@ -4,9 +4,38 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title><spring:message code="MENU.002000"/></title>
 </head>
 <body>
+<!-- 查询 -->
+<div class="aps-search">
+	<form>
+		<label></label>
+		<input type="text" name="" />
+		<label></label>
+		<input type="text" name="" />
+		<button type="button" class="aps-button"></button>
+	</form>
+	<strong>
+		
+	</strong>
+</div>
+
+<!-- 表格列表 -->
+<div class="aps-list" id="roleGrid"></div>
+
+<!-- 操作按钮 -->
+<div class="aps-barTools">
+	
+</div>
+
+
+<script type="text/javascript">
+	
+
+
+</script>
+
 
 </body>
 </html>
