@@ -33,7 +33,67 @@
 
 
 <script type="text/javascript">
+// 表格ID
+var GRID_ID = "#roleGrid";
+function search(type){
+	if("all"==type){
+
+	}
+	$(GRID_ID).data("kendoGrid").pager(1);
+}
+
+// 表格列信息
+var cols=[{
+	field:"rid",
+	template:"#=rid#",
+	title:'<spring:message code="PUB.id"/>',
+	width:100
+},{
+	field:"loginName",
+	template:"#=AppOS.dataConvert(loginName)#",
+	title:'<spring:message code="PUB.loginName"/>',
+	width:150
+}];
+
+//分页数据源
+var dataSource =  new kendo.data.DataSource({//data source
+	transport : {
+		read : {
+				url : "${ctx}/system/role.do",
+				dataType : "json",
+				type:"post",
+				data:function() {
+                    return $("#searchForm").serializeJson();
+               }
+		}
+	},
+	schema : { //对应接收参数转换为原始格式
+		data : function(data) {
+			return data.rows;
+		},
+		total : function(data) {
+			return data.total;
+		}
+	},
+	page:"${page}",
+	pageSize : "${pageSize}",
+	serverPaging : true
+});
 	
+//init kendo grid and window
+$(GRID_ID).kendoGrid({
+		dataSource : dataSource,
+		change : AppOS.onChange,
+		dataBound:AppOS.ondatabound,
+		selectable : "row",
+		sortable : false,
+		pageable: {
+               input: true,
+               numeric: false,
+               refresh: true,
+               pageSizes: Lyods.pageList
+           },
+	columns : cols});	
 
 
 </script>
