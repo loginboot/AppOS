@@ -54,7 +54,7 @@ public class Role extends AbstractEntity implements Serializable {
     }
 
     @ManyToOne
-    @JoinColumn(name = "CID")
+    @JoinColumn(name = "APP_ID")
     public AppList getAppList() {
         return appList;
     }
