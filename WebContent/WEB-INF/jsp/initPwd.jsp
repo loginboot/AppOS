@@ -6,7 +6,7 @@
 
 <!-- 密码初始化表单 -->
 <div id="initWin" style="display: none;">
-	<form id="initPwdForm" action="${ctx }/initPwd.do" method="post" class="aps-form">
+	<form id="initPwdForm" action="${ctx }/system/initPwd.do" method="post" class="aps-form">
 		<input id="userId" type="hidden" name="userId"/>
 		<fieldset class="aps-fieldset">
 			<legend><small><spring:message code="PUB.sercurity"/></small></legend>		
