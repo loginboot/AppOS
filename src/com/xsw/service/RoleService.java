@@ -45,7 +45,7 @@ public class RoleService extends BaseService {
 
     @Resource
     private RoleMenuDao roleMenuDao;
-    
+
     @Resource
     private MenuDao menuDao;
 
@@ -76,7 +76,7 @@ public class RoleService extends BaseService {
     public Role findOne(int rid) {
         return roleDao.findOne(rid);
     }
-    
+
     /**
      * 
      * 根据客户类型查找对应的菜单
@@ -93,6 +93,15 @@ public class RoleService extends BaseService {
             mlist = menuDao.findAppMenuAppId(appId);
         }
         return mlist;
+    }
+
+    /**
+     * 根据角色ID返回关联菜单信息
+     * @param rid
+     * @return
+     */
+    public List<RoleMenu> findRoleMenuByRid(int rid) {
+        return roleMenuDao.findByRid(rid);
     }
 
     /**
