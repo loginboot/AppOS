@@ -113,4 +113,74 @@ function appErrorData(data,form){
 	
 }
 
+
+/******JQuery Vaild For lyodssoft.com********/
+//Valid 日期与时间的校验 
+jQuery.validator.addMethod(
+  "datetime",
+   function(value, element,param) {
+       if (this.optional(element)) // return true on optional element 
+           return true;
+       if(value.length != param) return false;
+       valid = true;
+       var _date = substr(value,10);
+       valid = valid && jQuery.validator.methods.date.call(this, $.trim(_date), element);
+        if(valid && param>10){
+      	var _times = value.substring(11,value.length).split(":");
+      	for(var i=0;i<_times.length;i++){
+      		valid = /^\d+$/.test($.trim(_times[i]));
+      		if(valid){
+      			if(i==0){
+	        			if(_times[i]>23){
+	        				valid=false;
+	        				break;
+	        			}
+	        		}else{
+	        			if(_times[i]>59){
+	        				valid=false;
+	        				break;
+	        			}
+	        		}
+      		}else{
+      			break;
+      		}
+      	}
+       } 
+       return valid;
+   },
+  jQuery.validator.messages.date
+); 
+//Vaild多个邮箱检验
+jQuery.validator.addMethod(
+  "multiemail",
+   function(value, element) {
+       if (this.optional(element)) // return true on optional element 
+           return true;
+       var emails = value.split(/[;,]+/); // split element by , and ;
+       valid = true;
+       for (var i in emails) {
+           value = emails[i];
+           valid = valid && jQuery.validator.methods.email.call(this, $.trim(value), element);
+       }
+       return valid;
+   },
+  jQuery.validator.messages.email
+);   
+//Valid正则校验
+jQuery.validator.addMethod(
+  "pattern",
+   function(value,element,jsReg) {
+		if($.trim(value)!=""){
+			jsReg = eval(jsReg);
+			if(jsReg.test(value)){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		return true;
+   },
+   jQuery.validator.messages.pattern
+); 
+
 </script>
