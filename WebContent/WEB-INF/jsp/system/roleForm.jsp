@@ -29,47 +29,43 @@
 			<div class="aps-rows">
 				<label class="aps-label" for="description"><spring:message code="PUB.menu"/></label>
 				<div class="aps-roleMenu">
-					<c:forEach items="${mctxMap}" var="mctx">
-					<c:if test="${fn:length(mctx.value)>0}">
-						<p><spring:message code="${mctx.key }" /></p>
-						<table class="aps-roleMenu-table">
-							<thead>
-								<tr>
-									<th width="20%">功能</th>
-									<th>操作</th>
-								</tr>
-							</thead>
-						<c:forEach items="${mctx.value }" var="menuPar"> <!-- 最外层 -->
-							<tbody>
-							<tr class="aps-roleMenu-trBottom">
-								<td>
-								<spring:message code="${menuPar.menu.name }" />
-								<input type="checkbox" class="aps-modul-menu" name="mid" value="${menuPar.menu.mid }" 
-								${checked[menuPar.menu.mid] } ${disabled } />
-								</td>
-								<td></td>
-							</tr>
-							<c:forEach items="${menuPar.children }" var="menuChild"> <!-- 中间层 -->
+					<p>菜单列表</p>
+					<table class="aps-roleMenu-table">
+						<thead>
 							<tr>
-								<td>
-								<spring:message code="${menuChild.menu.name }" />
-								<input type="checkbox" class="aps-func-menu" name="mid" value="${menuChild.menu.mid }"
-								${checked[menuChild.menu.mid] } ${disabled } />
-								</td>
-								<td>
-								<c:forEach items="${menuChild.children }" var="menuSub"><!-- 最后一层 -->
-								<input type="checkbox" class="aps-action-menu" name="mid" value="${menuSub.menu.mid }"
-								${checked[menuSub.menu.mid] } ${disabled } />
-								<label class="aps-roleMenu-label"><spring:message code="${menuSub.menu.name }" /></label>
-								</c:forEach>
-								</td>
+								<th width="20%">功能</th>
+								<th>操作</th>
 							</tr>
+						</thead>
+					<c:forEach items="${mctx }" var="menuPar"> <!-- 最外层 -->
+						<tbody>
+						<tr class="aps-roleMenu-trBottom">
+							<td>
+							<spring:message code="${menuPar.menu.name }" />
+							<input type="checkbox" class="aps-modul-menu" name="mid" value="${menuPar.menu.mid }" 
+							${checked[menuPar.menu.mid] } ${disabled } />
+							</td>
+							<td></td>
+						</tr>
+						<c:forEach items="${menuPar.children }" var="menuChild"> <!-- 中间层 -->
+						<tr>
+							<td>
+							<spring:message code="${menuChild.menu.name }" />
+							<input type="checkbox" class="aps-func-menu" name="mid" value="${menuChild.menu.mid }"
+							${checked[menuChild.menu.mid] } ${disabled } />
+							</td>
+							<td>
+							<c:forEach items="${menuChild.children }" var="menuSub"><!-- 最后一层 -->
+							<input type="checkbox" class="aps-action-menu" name="mid" value="${menuSub.menu.mid }"
+							${checked[menuSub.menu.mid] } ${disabled } />
+							<label class="aps-roleMenu-label"><spring:message code="${menuSub.menu.name }" /></label>
 							</c:forEach>
-							</tbody>
+							</td>
+						</tr>
 						</c:forEach>
-						</table>
-					</c:if>
+						</tbody>
 					</c:forEach>
+					</table>
 				</div>
 			</div>
 			
