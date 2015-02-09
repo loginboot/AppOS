@@ -1,9 +1,7 @@
 package com.xsw.controller;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -275,26 +273,11 @@ public class RoleController extends BaseController {
         return "system/roleForm";
     }
 
-    @SuppressWarnings("unchecked")
     private void parseMenuCtx(int type, int appId, Model model) {
         List<Menu> mlist = roleService.getMenuBySysOrNor(type, appId);
-        List<String> syslst = (List<String>) appctx.getObjParam("systemOS");
-        Map<String, List<MenuCtx>> mctxMap = new LinkedHashMap<String, List<MenuCtx>>();
-        for (String str : syslst) {
-            String[] valArr = str.split("\\|");
-            int maxId = Integer.parseInt(valArr[1]);
-            int minId = Integer.parseInt(valArr[0]);
-            List<Menu> tmlst = new ArrayList<Menu>();
-            for (Menu m : mlist) {
-                if (minId <= m.getMid() && m.getMid() <= maxId) {
-                    tmlst.add(m);
-                }
-            }
-            // 解析菜单层次
-            List<MenuCtx> menuCtx = Util.convertMenusToMenuCtxs(tmlst);
-            mctxMap.put(valArr[2], menuCtx);
-        }
-        model.addAttribute("mctxMap", mctxMap);
+        // 解析菜单层次
+        List<MenuCtx> menuCtx = Util.convertMenusToMenuCtxs(mlist);
+        model.addAttribute("mctx", menuCtx);
     }
 
 }
