@@ -25,7 +25,7 @@
 <link href="${ctx}/statics/<spring:theme code="mainstyle.css"/>" type="text/css" rel="stylesheet" />
 
 <!-- JQUERY -->
-<script type="text/javascript" src="${ctx }/statics/jquery/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="${ctx }/statics/jquery/jquery-1.9.1.min.js"></script>
 <!-- KENOD UI -->
 <script type="text/javascript" src="${ctx }/statics/kendo/kendo.web.min.js"></script>
 <!-- JQUERY UI -->
@@ -59,6 +59,8 @@
     //获取AppCtx
     appctx = (AppCtx) webctx.getBean("appctx");
 %>
+
+<script src="${ctx}/statics/jquery/validation/messages_<%=locale%>.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 /**
@@ -112,6 +114,16 @@ function appAjaxCheck(data,form,mainForm){
 function appErrorData(data,form){
 	
 }
+
+//公用多语言变量
+var APS_LANG = {
+		ok : "<spring:message code='PUB.ok'/>",
+		cancel : "<spring:message code='PUB.cancel'/>",
+		warn : "<spring:message code='PUB.warn'/>",
+		message : "<spring:message code='PUB.message'/>",
+		success : "<spring:message code='PUB.successful'/>",
+		error : "<spring:message code='PUB.error'/>" 
+};
 
 
 /******JQuery Vaild For lyodssoft.com********/

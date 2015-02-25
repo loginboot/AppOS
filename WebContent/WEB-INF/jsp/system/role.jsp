@@ -4,7 +4,7 @@
 <html>
 <head>
 <%@include file="../common.jsp" %>
-<title><spring:message code="MENU.001010"/></title>
+<title><spring:message code="MENU.001020"/></title>
 </head>
 <body>
 <!-- 查询 -->
@@ -20,7 +20,7 @@
 	<strong>
 		<spring:message code="PUB.location" />
 		<i class="aps-arrow"></i>
-		<span><spring:message code="MENU.001010"/></span>
+		<span><spring:message code="MENU.001020"/></span>
 	</strong>
 </div>
 

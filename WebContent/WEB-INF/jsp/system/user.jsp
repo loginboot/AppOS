@@ -4,13 +4,13 @@
 <html>
 <head>
 <%@include file="../common.jsp" %>
-<title><spring:message code="MENU.001020"/></title>
+<title><spring:message code="MENU.001030"/></title>
 </head>
 <body>
 
 <!-- 查询表单  -->
 <div class="aps-search">
-	<form>
+	<form id="searchForm">
 		<label><spring:message code="PUB.name" /></label>
 		<input type="text" class="aps-textbox" name="search_RIGHTLIKE_name" value="${fn:escapeXml(search_RIGHTLIKE_name) }" />
 		<label><spring:message code="PUB.loginName" /></label>
@@ -21,7 +21,7 @@
 	<strong>
 		<spring:message code="PUB.location" />
 		<i class="aps-arrow"></i>
-		<span><spring:message code="MENU.001020"/></span>
+		<span><spring:message code="MENU.001030"/></span>
 	</strong>
 </div>
 
@@ -53,7 +53,7 @@ var GRID_ID = "#userGrid";
 // 查询
 function search(type){
 	if("all"==type){
-
+		$("#searchForm").clearForm();
 	}
 	$(GRID_ID).data("kendoGrid").pager(1);
 }
@@ -143,6 +143,50 @@ $(GRID_ID).kendoGrid({
                pageSizes: AppOS.pageList
            },
 	columns : cols});
+	
+//---------用户信息操作函数--------------------
+//用户新增
+$(GRID_ID+"Add").click(function(){
+	AppOS.get("${ctx}/system/user/add.do");
+});
+
+//用户修改或查看
+$(GRID_ID+"Upd,"+GRID_ID+"View").click(function(){
+	if(!GRID.userId){
+		alert("<spring:message code='PUB.nonselected'/>");
+		return;
+	}
+	var path = "view";
+	if(GRID_ID+"Upd"=="#"+this.id){
+		path = "upd";
+	}
+	AppOS.get("${ctx}/system/user/"+path+"/"+GRID.userId+".do");
+});
+
+//用户删除
+$(GRID_ID+"Del").click(function(){
+	if(!GRID.userId){
+		alert("<spring:message code='PUB.nonselected'/>");
+		return;
+	}
+	if(confirm("<spring:message code='PUB.confirmDelete'/>")){
+		jQuery.ajax({
+			type : 'POST',
+			url : '${ctx}/system/user/del.do',
+			dataType : 'json',
+			data : {id:GRID.rid},
+			success : function(data) {
+				var isOk = appAjaxCheck(data);
+				if(isOk==true){
+					dataSource.read();
+					return;
+				}		
+			},
+			error : appAjaxError
+		});
+	}
+});	
+
 </script>
 </body>
 </html>

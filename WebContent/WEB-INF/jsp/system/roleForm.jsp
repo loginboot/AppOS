@@ -4,13 +4,13 @@
 <html>
 <head>
 <%@include file="../common.jsp" %>
-<title><spring:message code="MENU.001010"/></title>
+<title><spring:message code="MENU.001020"/></title>
 </head>
 <body>
 
 <div class="aps-content">
 	<div class="aps-window">
-		<h3 class="aps-form-title"><spring:message code="MENU.001010"/> - <spring:message code="PUB.${action }"/></h3>
+		<h3 class="aps-form-title"><spring:message code="MENU.001020"/> - <spring:message code="PUB.${action }"/></h3>
 		<form id="roleForm" action="${ctx }/system/role/${action}.do" method="post">
 			<input type="hidden" name="rid" value="${role.rid }" />
 			<input type="hidden" name="lastModifyDate" value="${role.lastModifyDate }" />
