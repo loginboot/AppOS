@@ -8,6 +8,16 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.xsw.model.AppMenu;
 
+
+/**
+ * 
+ * @author loginboot.vicp.net
+ * 
+ * @creator xiesw
+ * @version 1.0.0
+ *
+ */
+
 public interface AppMenuDao extends CrudRepository<AppMenu, Integer> {
 
     // 根据应用ID删除所有关联菜单

@@ -14,7 +14,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 /**
- * Table T_CLIENT_MENU
+ * Table T_APP_MENU
  * 
  * @author loginboot.vicp.net
  * 
@@ -37,9 +37,9 @@ public class AppMenu extends AbstractEntity implements Serializable {
     private Menu menu;
 
     @Id
-    @SequenceGenerator(name = "SEQ_T_CLIENT_MENU", sequenceName = "SEQ_T_CLIENT_MENU", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_T_CLIENT_MENU")
-    @Column(name = "CMID", nullable = false)
+    @SequenceGenerator(name = "SEQ_T_APP_MENU", sequenceName = "SEQ_T_APP_MENU", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_T_APP_MENU")
+    @Column(name = "AMID", nullable = false)
     public int getAmId() {
         return amId;
     }

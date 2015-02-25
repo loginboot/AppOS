@@ -47,6 +47,7 @@ public class ExceptionController {
                 } else if (ex instanceof UnauthenticatedException) {
                     Util.writeJsonErrorMsg(messageSource, request, resonpse, "ERRCODE.2001");
                 } else if (ex instanceof InvalidDataAccessApiUsageException) {
+                    log.error("App List Engine Valid Error:", ex);
                     Util.writeJsonErrorMsg(messageSource, request, resonpse, "ERRCODE.9991");
                 } else {
                     log.error("App List Engine Error:", ex);
@@ -87,6 +88,7 @@ public class ExceptionController {
             } else if (ex instanceof UnauthenticatedException) {
                 mav.addObject("errorMsg", Util.getMessageByCode(messageSource, request, "ERRCODE.2001"));
             } else if (ex instanceof InvalidDataAccessApiUsageException) {
+                log.error("App List Engine Valid Error:", ex);
                 mav.addObject("errorMsg", Util.getMessageByCode(messageSource, request, "ERRCODE.9991"));
             } else {
                 log.error("App List Engine Error:", ex);

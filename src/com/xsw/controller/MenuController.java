@@ -27,6 +27,17 @@ import com.xsw.model.Menu;
 import com.xsw.service.MenuService;
 import com.xsw.utils.Util;
 
+/**
+ * 
+ * @author loginboot.vicp.net
+ * 
+ * @creator xiesw
+ * @version 1.0.0
+ * @date 2015-01-10
+ * @description 应用菜单数据维护 - 创建
+ *
+ */
+
 @Controller
 @RequestMapping("/system")
 @RequiresAuthentication
@@ -40,32 +51,70 @@ public class MenuController extends BaseController {
     @Resource
     private MenuService menuService;
 
+    /**
+     * 跳转到菜单维护页面
+     * @param request
+     * @param model
+     * @return
+     */
     @RequestMapping(value = "/menu.do", method = RequestMethod.GET)
     @RequiresPermissions("system-menu")
     public String list(HttpServletRequest request, Model model) {
         log.debug("setting system menu for:[menu.do]...");
         List<AppList> applst = menuService.findAllApp();
+        // 菜单查询
+        Map<String, List<MenuCtx>> mctxMap = parseMenuCtx(request);
         model.addAttribute("applst", applst);
+        model.addAttribute("mctxMap", mctxMap);
+        model.addAttribute("action", ACTION_UPD);
         return "system/menu";
     }
 
+    /**
+     * 返回一个菜单使用的菜单信息
+     * @param request
+     * @param response
+     * @param appId
+     * @return
+     */
     @RequestMapping(value = "/menu/getMenuForApp.do", method = RequestMethod.POST)
     @ResponseBody
-    @RequiresPermissions("system-menu-upd")
+    @RequiresPermissions("system-menu")
     public Object getMenuForApp(HttpServletRequest request, HttpServletResponse response,
             @RequestParam("appId") int appId) {
-        // 菜单查询
-        Map<String, List<MenuCtx>> mctxMap = parseMenuCtx(request);
         // 已选择的菜单
         List<AppMenu> amlst = menuService.findByAppId(appId);
         Map<Integer, String> checked = new HashMap<Integer, String>();
         for (AppMenu am : amlst) {
             checked.put(am.getMenu().getMid(), "checked='checked'");
         }
-        String resc = "\"mctxMap\":" + mapper.toJson(mctxMap) + ",\"checked\":" + mapper.toJson(mctxMap);
+        String resc = "\"checked\":" + mapper.toJson(checked);
+        log.debug("menu checked result:" + resc);
         return Util.writeJsonSuccMsg(messageSource, request, response, "MSGCODE.0000", resc);
     }
 
+    /**
+     * 修改菜单信息
+     * @param request
+     * @param response
+     * @param appId
+     * @return
+     */
+    @RequestMapping(value = "/menu/upd.do", method = RequestMethod.POST)
+    @ResponseBody
+    @RequiresPermissions("system-menu-upd")
+    public Object updFuncMenu(HttpServletRequest request, HttpServletResponse response, @RequestParam("appId") int appId) {
+        String[] mids = request.getParameterValues("mid");
+
+        //save 
+        menuService.saveOrUpdate(mids, appId);
+
+        return Util.writeJsonSuccMsg(messageSource, request, response, "MSGCODE.0000");
+    }
+
+    /*
+     * 菜单树生成
+     */
     @SuppressWarnings("unchecked")
     private Map<String, List<MenuCtx>> parseMenuCtx(HttpServletRequest request) {
         List<Menu> mlist = menuService.findBySystemMenu();
