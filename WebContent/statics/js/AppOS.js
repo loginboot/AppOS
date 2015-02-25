@@ -210,6 +210,132 @@ var AppOS = (function(){
     				}
     			}
     			return false;
+    		},
+    		msgBox : function(msg, type, callback) {
+    			// type 0 为确认,1 为选择窗口,
+    			var _msg = $("#APS_MSG_BOX");
+    			var _mode = $("#APS_MSG_MODE");
+    			// 不存在就重新创建
+    			if (_msg.length == 0) {
+    				var _msgDiv = "<div id='APS_MSG_BOX' class='aps-msg'></div>"
+    				var _msgbody = $("<div class='aps-msg-body'></div>");
+    				_msg = $(_msgDiv);
+    				$(document.body).append(_msg);
+    				_msg.content = $("<div class='aps-msg-content'></div>");
+    				_msg.action = $("<div class='aps-msg-action'></div>");
+    				_msg.append(_msgbody);
+    				_msgbody.append(_msg.content).append(_msg.action);
+    				_msg.data("action", _msg.action).data("content", _msg.content);
+    			}
+    			if (_mode.length == 0) {
+    				var _div = "<div id='APS_MSG_MODE' class='aps-msg-mode'></div>";
+    				_mode = $(_div);
+    				$(document.body).append(_mode);
+    			}
+
+    			// 内部函数
+    			function _close() {
+    				var _height = _msg.height();
+    				_msg.animate({
+    					top : -_height
+    				}, 300, function() {
+    					_mode.hide();
+    					// 打开
+    					if(AppOS.constant["MSG_BOX_CONFIRM"]!=type){
+    						_cback();
+    					}
+    				});
+    			}
+
+    			// CONFIRM时继执行
+    			function _cback() {
+    				if (typeof callback == "function") {
+    					callback();
+    				}
+    			}
+
+    			// 打开提示框
+    			function _open() {
+    				_msg.data("content").html(msg);
+    				_mode.show();
+    				_msg.animate({
+    					top : 2
+    				}, 300);
+    			}
+    			
+    			_msg.data("action").html("");
+    			var _okbtn = $("<button class='aps-button'>"+APS_LANG.ok+"</button>");
+    			if(AppOS.constant["MSG_BOX_CONFIRM"] == type){
+    				_okbtn.on("click",_cback);
+    			}else{
+    				_okbtn.on("click",_close);
+    			}
+    			_msg.data("action").append(_okbtn);
+    			// 操作类型
+    			switch (type) {
+    			case AppOS.constant["MSG_BOX_WARM"]:
+    				msg = "<strong><i class='aps-i-warn'></i>"+APS_LANG.warn+"</strong><div class='aps-msg-hr'></div>&nbsp;&nbsp;&nbsp;&nbsp;" + msg;
+    				break;
+    			case AppOS.constant["MSG_BOX_ERROR"]:
+    				msg = "<strong><i class='aps-i-error'></i>"+APS_LANG.error+"</strong><div class='aps-msg-hr'></div>&nbsp;&nbsp;&nbsp;&nbsp;" + msg;
+    				break;
+    			case AppOS.constant["MSG_BOX_SUCCESS"]:
+    				msg = "<strong><i class='aps-i-success'></i>"+APS_LANG.success+"</strong><div class='aps-msg-hr'></div>&nbsp;&nbsp;&nbsp;&nbsp;" + msg;
+    				break;
+    			case AppOS.constant["MSG_BOX_CONFIRM"]:
+    				msg = "<strong><i class='aps-i-message'></i>"+APS_LANG.message+"</strong><div class='aps-msg-hr'></div>&nbsp;&nbsp;&nbsp;&nbsp;" + msg;
+    				var _callbtn = $("<button class='aps-button'>"+APS_LANG.cancel+"</button>").on("click",_close);
+    				_msg.data("action").append(_callbtn);
+    				break;
+    			}
+    			
+    			// 打开
+    			if(AppOS.constant["MSG_BOX_CLOSE"]==type){
+    				_close();
+    			}else{
+    				_open();
+    			}
+    		},winBox : function(id,ops){
+    			return $("#"+id).kendoWindow({
+    				title : ops.title||"",
+    				minWidth : ops.minWidth||"450px",
+    				minHeight: ops.minHeight|"180px",
+    				maxWidth : ops.maxWidth||"800px",
+    				maxHeight : ops.maxHeight||"500px",
+    				width : ops.width || "auto",
+    				height : ops.height || "auto",
+    				visible : ops.visible!=null?ops.visible:false,
+    				modal : ops.modal!=null?ops.model:true,
+    				actions : ops.actions || [ "Close" ],
+    				dragstart : function(event){
+    					this.wrapper.css({opacity: 0.7});
+    					$(this.wrapper.context).css({visibility:"hidden"});
+    				},
+    				dragend : function(event){
+    					this.wrapper.css({opacity: 1});
+    					$(this.wrapper.context).css({visibility:"visible"});
+    				}
+    			}).data("kendoWindow");
+    		},
+    		constant : {
+    			MSG_BOX_WARM : 0,
+    			MSG_BOX_CONFIRM : 1,
+    			MSG_BOX_ERROR : 2,
+    			MSG_BOX_SUCCESS : 3,
+    			MSG_BOX_CLOSE : 4
+    		},
+    		form_editable : function(id, type) {
+    			// 表单操作的disable true or false
+    			$("input[type='text'],input[type='email'],input[type='checkbox'],input[type='radio'],select,textarea",
+    					$("#" + id)).attr("disabled", type);
+    			type ? $("button[type='submit']", $("#" + id)).hide() : $(
+    					"button[type='submit']", $("#" + id)).show();
+    			$("#globalErrSpan").html("");
+    			$(".globalErrSpan",$("#" + id)).html("");
+    		},
+    		resetForm : function(id){
+    			$("#"+id).resetForm();
+    			$("#"+id).validate().resetForm();
     		}
     };
    

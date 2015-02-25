@@ -71,10 +71,10 @@ background: -webkit-linear-gradient(top,#bbb,#FDFDFD,#bbb);}
 /**
 ** VALID CSS
 **/
-label.error{display:inline-block;position:relative;padding:0 .3em;margin-left:7px;;line-height: 20px;background-color: #942724;
+span.error{display:inline-block;position:relative;padding:0 .3em;margin-left:7px;;line-height: 20px;background-color: #942724;
 border-radius:2px;color: #FFF; box-shadow: 3px 5px 10px #888;white-space:nowrap;}
-label.error:hover{cursor: pointer;}
-label.error i{display: inline-block;position: absolute;width: 9px;height: 9px;background-image: url("img/valid_bg.gif");
+span.error:hover{cursor: pointer;}
+span.error i{display: inline-block;position: absolute;width: 9px;height: 9px;background-image: url("img/valid_bg.gif");
 background-repeat: no-repeat;left:-5px;top:25%;}
 /**END VALID CSS***/
 
@@ -116,9 +116,16 @@ div.k-window,.k-window.k-state-focused{border-color:#007F00; }
 .aps-form{}
 .aps-fieldset{border: 1px solid #95C37C;border-radius:4px;padding: .3em;color: #007F00;}
 .aps-rows{margin-top: 5px;}
+.aps-group{float: left;width: 530px;}
 .aps-label{display: inline-block;width: 120px;text-align: right;color: #007F00;}
-.aps-textbox{height: 22px;border-radius:4px;border: 1px solid #95C37C;text-indent: 5px;}
+.aps-textbox{height: 24px;border-radius:4px;border: 1px solid #95C37C;text-indent: 5px;}
+select.aps-textbox{height: 26px;width: 170px;}
+textarea.aps-textbox{width: 170px;height: auto;}
+label.aps-textbox{width:170px;display: inline-block;line-height: 26px;background-color: #EFEFEF;color: #888;}
+.aps-vtop{vertical-align: top;}
+.aps-clear{clear: both;}
 .aps-action{padding-left: 123px;margin-top: 5px;}
+.aps-pad-larger{padding-left: 243px;}
 .aps-button{border-radius:4px;background-color: #EFEFEF;border:1px solid #98CC66;padding: .3em;color:#007F00;}
 .aps-button:hover{cursor: pointer;background-color: #FFF;}
 .aps-small{width:80px;}
@@ -135,8 +142,31 @@ border-radius:3px;margin-top: 10px;}
 .aps-roleMenu p{line-height: 30px;background-color: #007F00;color: #FFF;margin-top: 5px;text-indent: 5px;}
 .aps-roleMenu input[type='checkbox']{vertical-align: middle;}
 .aps-roleMenu-label{display: inline-block;width: 120px;}
-.aps-roleMenu-table{width: 100%; color: #007F00;border-collapse: collapse;border-right: 1px solid #007F00;}
+.aps-roleMenu-table{width: 100%; color: #007F00;border-collapse: collapse;border-right: 1px solid #007F00;border-bottom: 1px solid #007F00;}
 .aps-roleMenu-table thead th{background-color: #98C617; text-align: left;padding: .3em;color:#fff;border-left: 1px solid #007F00;}
 .aps-roleMenu-trBottom td{border-bottom: 1px solid #007F00;background-color: #EEE;}
 .aps-roleMenu-table tbody td{padding: .3em;border-left: 1px solid #007F00;}
 
+
+/**
+** APPOS MSG BOX CSS
+**/
+.aps-msg{position: fixed;z-index: 10088;top:-80px;width: 100%;}
+.aps-msg-body{position: static;border-radius:5px; margin: 0 auto;
+width: 320px;padding: .5em;border:1px solid #CCC;background-color: #EEF4F5;}
+.aps-msg-content{background-color: #FEFACF;padding: .3em .2em; border: 1px solid #FF9829;line-height: 28px;
+overflow: auto;min-height: 80px;max-height: 450px;}
+.aps-i-warn{display: inline-block;width: 24px;height: 24px;background-image: url("img/aps_warn.png");
+background-repeat: no-repeat;background-position: 1px 1px;margin-bottom: -5px;margin-right: 5px;margin-left: 10px;}
+.aps-i-message{display: inline-block;width: 24px;height: 24px;background-image: url("img/aps_message.png");
+background-repeat: no-repeat;margin-bottom: -5px;margin-right: 5px;margin-left: 10px;	}
+.aps-i-error{display: inline-block;width: 24px;height: 24px;background-image: url("img/aps_error.png");
+background-repeat: no-repeat;margin-bottom: -6px;margin-right: 5px;margin-left: 10px;	}
+.aps-i-success{display: inline-block;width: 24px;height: 24px;background-image: url("img/aps_success.png");
+background-repeat: no-repeat;margin-bottom: -5px;margin-right: 5px;margin-left: 10px;	}
+
+.aps-msg-hr{margin: 3px;border-top:1px solid #CCC;}
+.aps-msg-mode{position: fixed;z-index: 10087;left:0px;top:0px;right:0px;bottom:0px;background-color: #fcfcfc;
+filter:alpha(opacity=50);-moz-opacity:0.5;-khtml-opacity: 0.5;opacity: 0.5;display: none;}
+.aps-msg-action{text-align: right;padding-top: .3em;}
+/***END MSG BOX CSS***/
