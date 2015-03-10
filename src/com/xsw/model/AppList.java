@@ -40,7 +40,9 @@ public class AppList extends AbstractEntity implements Serializable {
     private String chiName;
     private String engName;
     private String displayName;
-    private String urlName;
+    private String indexUrl;
+    private String loginUrl;
+    private String logoutUrl;
     private int type;
     private String remark;
     private int status;
@@ -89,15 +91,31 @@ public class AppList extends AbstractEntity implements Serializable {
         this.displayName = displayName;
     }
 
-    @NotBlank
-    @Length(max = 20)
-    @Column(name = "URL_NAME")
-    public String getUrlName() {
-        return urlName;
+    @Column(name = "INDEX_URL")
+    public String getIndexUrl() {
+        return indexUrl;
     }
 
-    public void setUrlName(String urlName) {
-        this.urlName = urlName;
+    public void setIndexUrl(String indexUrl) {
+        this.indexUrl = indexUrl;
+    }
+
+    @Column(name = "LOGIN_URL")
+    public String getLoginUrl() {
+        return loginUrl;
+    }
+
+    public void setLoginUrl(String loginUrl) {
+        this.loginUrl = loginUrl;
+    }
+
+    @Column(name = "LOGOUT_URL")
+    public String getLogoutUrl() {
+        return logoutUrl;
+    }
+
+    public void setLogoutUrl(String logoutUrl) {
+        this.logoutUrl = logoutUrl;
     }
 
     @Column(name = "TYPE")

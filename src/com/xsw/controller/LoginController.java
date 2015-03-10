@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.ExpiredCredentialsException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.springframework.stereotype.Controller;
@@ -118,13 +121,34 @@ public class LoginController extends BaseController {
         try {
             currentUser.login(token);
             isOk = true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        }catch (IncorrectCredentialsException ice) {
+            model.addAttribute(FormAuthenticationFilter.DEFAULT_ERROR_KEY_ATTRIBUTE_NAME,
+                    Util.getMessageByCode(messageSource, request, ice.getClass().getName()));
+            loginService.updateFailureTimes(token.getAppId(), token.getUsername());
+            log.error("Login failure, did not match the expected credentials.",ice);
+        }catch (ExpiredCredentialsException ece) {
+            model.addAttribute(FormAuthenticationFilter.DEFAULT_ERROR_KEY_ATTRIBUTE_NAME,
+                    Util.getMessageByCode(messageSource, request, ece.getClass().getName()));
+            log.error("The user license has expired.",ece);
+        } catch (AuthenticationException e) {
+            String code = e.getClass().getName();
+            if ("ERRCODE.1008".equals(e.getMessage())) {
+                code = e.getMessage();
+            } else if ("ERRCODE.userAccountExpired".equals(e.getMessage())) {
 
+                // 更新用户状态为锁定，锁定原因为3
+                // loginService.updUserStatusToLockAndLockReason(username, Status.LOCK, Constant.USER_ACCOUNT_EXPIRE);
+                code = e.getMessage();
+            }
+            model.addAttribute(FormAuthenticationFilter.DEFAULT_ERROR_KEY_ATTRIBUTE_NAME,
+                    Util.getMessageByCode(messageSource, request, code));
+            log.error("Login failure,", e);
+        }
+        
+        // 失败
         if (!isOk) {
             model.addAttribute(FormAuthenticationFilter.DEFAULT_USERNAME_PARAM, userName);
-            return "/login";
+            return app.getLoginUrl();
         }
         long stimeout = Constant.DEFAULT_SESSION_TIMEOUT;
         String spto = Util.getAppParamValue(actx.getParams(), Constant.PARAM_SESSION_TIMEOUT);
@@ -139,7 +163,7 @@ public class LoginController extends BaseController {
         currentUser.getSession().setAttribute(Constant.USER_ROOT_MENU_CTX, rootMenuCtx);
         loginService.loginSuccessful(actx.getAppList().getAppId(), user.getLoginName(), (String) currentUser
                 .getSession().getId());
-        return "redirect:/" + app.getUrlName();
+        return "redirect:/" + app.getIndexUrl();
     }
 
     /**
@@ -157,7 +181,7 @@ public class LoginController extends BaseController {
         if (SecurityUtils.getSubject().getSession() != null) {
             if (Util.getCurrentUser() != null && Util.getShiroSession() != null) {
                 request.setAttribute("LOGIN_NAME", Util.getCurrentUser().getLoginName());
-                idxUrl = Util.getCurrentUser().getAppList().getUrlName();
+                idxUrl = Util.getCurrentUser().getAppList().getIndexUrl();
                 loginService.logoutSuccessful(Util.getCurrentUser().getUserId(), (String) Util.getShiroSession()
                         .getId());
             }
