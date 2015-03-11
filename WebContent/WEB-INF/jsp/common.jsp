@@ -95,24 +95,89 @@ function appCheckJsonData(data){
  * @reture false.failed true.success
  */
 function appAjaxCheck(data,form,mainForm){
+	// 返回值是否为JSON对象
 	if(!appCheckJsonData(data)){
 		return false;
-	}	
-	if(data.retmsg.CODE.substring(0,7)=="ERRCODE"){
-		
 	}
 	
-	//uuid
+	//uuid 较验码重置
   	if(data.retmsg._UUID_TOKEN!=null){
   		$("#_UUID_TOKEN").val(data.retmsg._UUID_TOKEN);
   		$("input[name='_UUID_TOKEN']").val(data.retmsg._UUID_TOKEN);
   	}
+	
+	if(data.retmsg.CODE.substring(0,7)=="ERRCODE"){
+		// 不存在全局错误时弹出错误提醒
+		if(!data.retmsg.GLOBAL){
+			alert(data.retmsg.MSG);
+		}
+		
+		// 全局错误处理
+	  	if(data.retmsg.GLOBAL!=null){
+	  		var global = "";
+	  		for(var i=0;i<data.retmsg.GLOBAL.length;i++){
+	  		   if(global!=""){
+	  			   global+="</br>";
+	  		   }
+	  		   global+=data.retmsg.GLOBAL[i];
+	  		}
+	  		if(global!=""){
+	  			var ges = $("#globalErrSpan");
+	  			if(form && ges.length==0){
+	  				ges = $(".globalErrSpan",form);
+	  			}
+	  		   	ges.html('<div class="aps-alert aps-alert-error">'
+	  				+'<span class="aps-alert-close"></span><spring:message code="PUB.validErr"/>:<br/>'+global+'</div>');
+	  		}
+	  	}
+		
+		// 表单错误显示
+	  	if(form || mainForm){
+	  		if(form){
+	  			appErrorData(data,form);
+	  		}
+	  		if(mainForm){
+	  			appErrorData(data,mainForm);
+	  		}
+	  	}else{
+	  		appErrorData(data,$(document.body));
+	  	}
+		
+		return false;
+	} // end if error
 	return true;
 }
 
 //处理from数据信息
 function appErrorData(data,form){
-	
+	//Fields Error
+  	if(data.retmsg.FIELDERRS!=null){
+  		//remote error span first
+  		for(var i=0;i<data.retmsg.FIELDERRS.length;i++){
+  			var fieldObj = $("input[name='"+data.retmsg.FIELDERRS[i].field+"']",form);
+  			if(fieldObj.length==0){
+  				fieldObj = $("textarea[name='"+data.retmsg.FIELDERRS[i].field+"']",form);
+  				if(fieldObj.length==0){
+  					fieldObj = $("select[name='"+data.retmsg.FIELDERRS[i].field+"']",form);
+  				}
+  			}
+  			// 是否存在错误的对象
+  			if(fieldObj.length!=0){
+  				if(i==0){
+  				    fieldObj.focus();
+  				}
+  				var nextSpan = fieldObj.next();
+  				if(nextSpan.length!=0){	
+  					if(nextSpan[0].tagName=="SPAN" && nextSpan.hasClass("error")){
+  						nextSpan.html("<i></i>"+data.retmsg.FIELDERRS[i].defaultMessage);
+  						nextSpan.show();
+  					}
+  				}else{
+  					fieldObj.after("<span class='error'><i></i>"+data.retmsg.FIELDERRS[i].defaultMessage+"</span>");
+  				} // end if span	  				
+  			} // end if field
+  		} // end for
+  	} // end if valid
 }
 
 //公用多语言变量
@@ -194,5 +259,28 @@ jQuery.validator.addMethod(
    },
    jQuery.validator.messages.pattern
 ); 
+
+// 加载DOM节点完成之后的事件处理
+jQuery(function($){
+	// global error console for close on click
+	$("#globalErrSpan,.globalErrSpan").click(function(e){
+		var e = e||window.event,
+		curr = e.target||e.srcElement;
+		if(curr.tagName=="DIV" && $(curr).hasClass("aps-alert")){
+			$(curr).slideUp("slow");
+		}else if(curr.tagName="SPAN" && curr.className=="aps-alert-close"){
+			$(curr).parent().slideUp("slow");
+		}
+	});
+	
+	//form error close on click
+	$("form").click(function(e){
+		var e = e||window.event,
+			curr = e.target||e.srcElement;
+		if(curr.tagName=='SPAN' && $(curr).hasClass("error")){
+			$(curr).slideToggle("fast");	
+		}
+	});
+});
 
 </script>
