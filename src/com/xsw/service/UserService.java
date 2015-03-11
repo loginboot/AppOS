@@ -129,6 +129,7 @@ public class UserService extends BaseService {
         role.setRid(rid);
         ur.setRole(role);
         ur.setUser(tmp);
+        userRoleDao.save(ur); // 保存
     }
     
     /**

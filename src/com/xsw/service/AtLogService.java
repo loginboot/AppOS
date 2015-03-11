@@ -59,7 +59,7 @@ public class AtLogService extends BaseService {
     public Page<AtLog> findByPage(int page, int pageSize, Map<String, Object> search, Sort sort) {
         log.debug("***search AtLog by Page for page:[" + page + "] and pageSize:[" + pageSize + "]***");
         if (sort == null) {
-            sort = new Sort(Direction.ASC, "userId");
+            sort = new Sort(Direction.DESC, "operTime");
         }
         PageRequest pageRequest = new PageRequest(page - 1, pageSize, sort);
         return atLogDao.findAll((Specification<AtLog>) buildSpecification(search, AtLog.class), pageRequest);

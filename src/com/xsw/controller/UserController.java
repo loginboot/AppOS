@@ -100,6 +100,11 @@ public class UserController extends BaseController {
         Map<String, Object> search = Servlets.getParametersStartingWith(request, "search_");
         // 执行
         Page<User> ls = userService.findByPage(page, pageSize, search, sort);
+        // 持久化查询条件
+        search.put("page", page);
+        search.put("pageSize", pageSize);
+        Util.storeSearchKeyValue(request, search, "search_");
+        
         // 返回JSON数据
         return Util.writePagableJson(ls);
     }

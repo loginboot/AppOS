@@ -58,7 +58,7 @@ public class AppListService extends BaseService {
     public Page<AppList> findByPage(int page, int pageSize, Map<String, Object> search, Sort sort) {
         log.debug("search AppList for page:[" + page + "] and pageSie:[" + pageSize + "]...");
         if (sort == null) {
-            sort = new Sort(Direction.ASC, "rid");
+            sort = new Sort(Direction.ASC, "appId");
         }
         PageRequest pageRequest = new PageRequest(page - 1, pageSize, sort);
         return appListDao.findAll((Specification<AppList>) buildSpecification(search, AppList.class), pageRequest);

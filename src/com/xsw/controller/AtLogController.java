@@ -12,11 +12,14 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.xsw.constant.ExpStatusEnum;
+import com.xsw.constant.Type;
 import com.xsw.model.AtLog;
 import com.xsw.service.AtLogService;
 import com.xsw.utils.Servlets;
@@ -53,10 +56,12 @@ public class AtLogController extends BaseController{
      */
     @RequestMapping(value = "/atlog.do", method = RequestMethod.GET)
     @RequiresPermissions("system-atlog")
-    public String list(HttpServletRequest request) {
+    public String list(HttpServletRequest request,Model model) {
         log.debug("get atlog list for url:[atlog.do]...");
         // 初始化分页信息
         Util.initPage(request);
+        model.addAttribute("types", ExpStatusEnum.actionTypes);
+		model.addAttribute("permissions", atLogService.getMenuByType(Type.MENU_MODULE));
         return "system/atlog";
     }
 
@@ -79,6 +84,10 @@ public class AtLogController extends BaseController{
         Map<String, Object> search = Servlets.getParametersStartingWith(request, "search_");
         // 执行
         Page<AtLog> ls = atLogService.findByPage(page, pageSize, search, sort);
+        // 持久化查询条件
+        search.put("page", page);
+        search.put("pageSize", pageSize);
+        Util.storeSearchKeyValue(request, search, "search_");
         // 返回JSON数据
         return Util.writePagableJson(ls);
     }

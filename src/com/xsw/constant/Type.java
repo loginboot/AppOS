@@ -45,4 +45,11 @@ public class Type {
     public final static int USER_UPD_INITPWD = 0;// 用户初始密码
     public final static int USER_UPD_RESETPWD = 1;// 用户重置密码
     public final static int USER_UPD_SETTING = 2;// 用户设置更新
+    
+    /**
+     * 菜单层级类型
+     */
+    public final static int MENU_SYSTEM = 0; // 首层系统
+    public final static int MENU_MODULE = 2; // 功能层
+    public final static int MENU_ACTION = 1;// 操作层
 }
