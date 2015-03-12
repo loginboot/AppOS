@@ -8,13 +8,13 @@
 		<property name="params">
 			<map>
 				<!-- upload directory -->
-				<entry key="UploadDir" value="file:/c:\lyodsUpload" />
+				<entry key="UploadDir" value="file:/c:\appUpload" />
 				<entry key="UploadTemp" value="upload/temp" />
-				<entry key="EmailReport" value="file:/c:\lyodsUpload\emailReport" />
+				<entry key="EmailReport" value="file:/c:\appUpload\emailReport" />
 				<entry key="TmpKeepDays" value="7" />
-				<entry key="jxlTemplates" value="templates/jxls" />
-				<entry key="reportTemplates" value="templates/report" />
-				<entry key="importTemplates" value="templates/import" />
+				<entry key="jxlTemplates" value="tmpl/jxls" />
+				<entry key="reportTemplates" value="tmpl/report" />
+				<entry key="importTemplates" value="tmpl/import" />
 				<entry key="emailMaxRetrytimes" value="5" />
 				<!-- Export Max Size -->
 				<entry key="MaxPageSize" value="2000" />

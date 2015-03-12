@@ -4,7 +4,6 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
   <!-- excel view -->
-  <bean id="JxlsExcelView" class="com.lyods.views.JxlsExcelView"/>
-  <!-- ireport pdf view -->
-  <bean id="IReportPdfView" class="com.lyods.views.IReportPdfView"/>
+  <bean id="JxlsExcelView" class="com.xsw.views.JxlsExcelView"/>
+  
 </beans>
