@@ -109,7 +109,12 @@ public class AtLogController extends BaseController {
         Sort sort = null;
         search.put("NOTNULL_permission", "not null");
         log.debug("export atlog xls for search:" + search);
-        Page<AtLog> ls = atLogService.findByPage(1, 2000, search, sort);
+        int pageSize = 2000;
+        String maxSize = appctx.getParam("maxPageSize");
+        if(!Util.isEmpty(maxSize)){
+            pageSize = Integer.parseInt(maxSize);
+        }
+        Page<AtLog> ls = atLogService.findByPage(1, pageSize, search, sort);
         // menu and user idToName
         Map<String, String> mlst = new HashMap<String, String>();
         mlst.put("exception", Util.getMessageByCode(messageSource, request, "PUB.exception"));
