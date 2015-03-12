@@ -17,9 +17,7 @@
 				<entry key="importTemplates" value="tmpl/import" />
 				<entry key="emailMaxRetrytimes" value="5" />
 				<!-- Export Max Size -->
-				<entry key="MaxPageSize" value="2000" />
-				<!-- client logo path -->
-				<entry key="ClientLogo" value="statics/styles/img" />
+				<entry key="maxPageSize" value="2000" />
 			</map>
 		</property>
 		<property name="objparams">
