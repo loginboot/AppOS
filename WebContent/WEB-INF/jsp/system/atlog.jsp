@@ -4,7 +4,7 @@
 <html>
 <head>
 <%@include file="../common.jsp" %>
-<title><spring:message code="MENU.01090"/></title>
+<title><spring:message code="MENU.001090"/></title>
 </head>
 <body>
 
@@ -31,7 +31,9 @@
 	<input type="text" class="aps-textbox" name="search_LIKE_details" value="${fn:escapeXml(seach_LIKE_details) }" />
 	<button class="aps-button" type="button" onclick="search()"><spring:message code="PUB.search"/></button>
 	<button class="aps-button" type="button" onclick="search('all')"><spring:message code="PUB.all"/></button>
-	<button class="aps-button" type="button" onclick="expoutXLS()"><spring:message code="PUB.excelExport"/></button>
+	<button class="aps-button" type="button" onclick="AppOS.exportData('${ctx}/system/atlog/export.do','searchForm')">
+	<spring:message code="PUB.excelExport"/>
+	</button>
 	</form>
 	<strong>
 		<spring:message code="PUB.location" />
@@ -134,6 +136,7 @@ $(GRID_ID).kendoGrid({
                pageSizes: AppOS.pageList
            },
 	columns : cols});	
+
 
 </script>
 

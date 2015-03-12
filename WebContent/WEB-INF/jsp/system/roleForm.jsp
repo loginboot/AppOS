@@ -11,7 +11,7 @@
 <div class="aps-content">
 	<div class="aps-window">
 		<h3 class="aps-form-title"><spring:message code="MENU.001020"/> - <spring:message code="PUB.${action }"/></h3>
-		<form id="roleForm" action="${ctx }/system/role/${action}.do" method="post">
+		<form id="roleForm" action="${ctx }/system/role/${action}.do" method="post" class="aps-form">
 			<input type="hidden" name="rid" value="${role.rid }" />
 			<input type="hidden" name="lastModifyDate" value="${role.lastModifyDate }" />
 			<input type="hidden" name="appList.appId" value="${role.appList.appId }" />
@@ -29,12 +29,12 @@
 			<div class="aps-rows">
 				<label class="aps-label" for="description"><spring:message code="PUB.menu"/></label>
 				<div class="aps-roleMenu">
-					<p>菜单列表</p>
+					<p><spring:message code="role.menu"/></p>
 					<table class="aps-roleMenu-table">
 						<thead>
 							<tr>
-								<th width="20%">功能</th>
-								<th>操作</th>
+								<th width="20%"><spring:message code="PUB.func"/></th>
+								<th><spring:message code="PUB.action"/></th>
 							</tr>
 						</thead>
 					<c:forEach items="${mctx }" var="menuPar"> <!-- 最外层 -->

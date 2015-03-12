@@ -53,8 +53,8 @@
 		<table class="aps-roleMenu-table">
 			<thead>
 				<tr>
-					<th width="20%">功能</th>
-					<th>操作</th>
+					<th width="20%"><spring:message code="PUB.func"/></th>
+					<th><spring:message code="PUB.action"/></th>
 				</tr>
 			</thead>
 			<c:forEach items="${mctx.value }" var="menuPar"> <!-- 最外层 -->

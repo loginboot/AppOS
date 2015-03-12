@@ -13,7 +13,7 @@
 	<!-- 用户信息设置 -->
 	<div class="aps-window">
 		<h3 class="aps-form-title"><spring:message code="PUB.userinfo"/> - <spring:message code="PUB.upd" /></h3>
-		<form id="infoForm" action="${ctx }/system/params/${action }.do" method="post">
+		<form id="infoForm" action="${ctx }/system/user/updUserInfo.do" method="post" class="aps-form">
 			<div class="globalErrSpan"></div>
 			<input type="hidden" name="appList.appId"  value="${user.appList.appId}"/>
 			<input type="hidden" name="userId"  value="${user.userId}"/>
@@ -66,7 +66,7 @@
 	<!-- 用户密码设置 -->
 	<div class="aps-window">
 		<h3 class="aps-form-title"><spring:message code="param.pwdControl"/> - <spring:message code="PUB.upd" /></h3>
-		<form id="secForm" action="${ctx }/system/params/${action }.do" method="post">
+		<form id="secForm" action="${ctx }/system/user/updSecurity.do" method="post"  class="aps-form">
 			<div class="globalErrSpan"></div>
 			<input type="hidden" name="userId" value="${user.userId}"/>
 			<div class="aps-rows">

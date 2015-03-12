@@ -10,18 +10,20 @@
 <div class="aps-content">
 	<div class="aps-window">
 		<h3 class="aps-form-title"><spring:message code="MENU.001030"/> - <spring:message code="PUB.${action }"/></h3>
-		<form id="userForm" action="${ctx }/system/user/${action}.do" method="post">
+		<form id="userForm" action="${ctx }/system/user/${action}.do" method="post" class="aps-form">
 			<input type="hidden" name="userId" value="${user.userId }" />
 			<input type="hidden" name="lastModifyDate" value="${user.lastModifyDate }" />
 			<input type="hidden" name="appList.appId" value="${user.appList.appId }" />
-			
+			<c:if test="${action=='upd'}">
+			<shiro:hasPermission name="system-user-rpw">
 			<div class="aps-rows">
 				<label class="aps-label"><spring:message code="PUB.resetPwd"/></label>
 				<button id="resetPwdBtn" class="aps-button" type="button"
 				 onclick="resetPwd()" ><spring:message code="PUB.resetPwd"/></button>
 			    <label id="newPwd"></label>
 			</div>
-			
+			</shiro:hasPermission>
+			</c:if>
 			<div class="aps-rows aps-group">
 				<label class="aps-label" for="name"><spring:message code="PUB.name"/></label>
 				<input type="text" id="name" name="name" value="${fn:escapeXml(user.name) }" class="aps-textbox"
@@ -47,7 +49,7 @@
 			
 			<div class="aps-rows aps-group">
 				<label for="rid" class="aps-label"><spring:message code="user.userRole"/></label>
-				<select class="aps-textbox" name="rid" id="rid" ${disabled }>
+				<select class="aps-textbox" name="rid" id="rid" ${disabled } required>
 					<c:forEach items="${roles }" var="role">
 						<option value="${role.rid }">${fn:escapeXml(role.name) }</option>					
 					</c:forEach>

@@ -11,7 +11,7 @@
 <div class="aps-content">
 	<div class="aps-window">
 		<h3 class="aps-form-title"><spring:message code="MENU.001040"/> - <spring:message code="PUB.${action }"/></h3>
-		<form id="paramsForm" action="${ctx }/system/params/${action }.do" method="post">
+		<form id="paramsForm" action="${ctx }/system/params/${action }.do" method="post"  class="aps-form">
 			<div class="globalErrSpan"></div>
 			<c:forEach items="${appParams}" var="p">
 			<div class="aps-rows">
@@ -35,7 +35,7 @@
 	<br />
 	<div class="aps-window">
 		<h3 class="aps-form-title"><spring:message code="param.pwdControl"/> - <spring:message code="PUB.${action }"/></h3>
-		<form id="pwdControlForm" action="${ctx }/system/params/pwdControl/${action }.do" method="post">
+		<form id="pwdControlForm" action="${ctx }/system/params/pwdControl/${action }.do" method="post" class="aps-form">
 			<div class="globalErrSpan"></div>
 			<c:forEach items="${pwdControlParams}" var="p">
 			<div class="aps-rows">
