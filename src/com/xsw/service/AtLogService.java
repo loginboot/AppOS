@@ -89,7 +89,7 @@ public class AtLogService extends BaseService {
         Sort sort = new Sort(Direction.ASC, "mid");
         List<Menu> ms = (List<Menu>) menuDao.findAll(sort);
         Map<String, String> map = new LinkedHashMap<String, String>();
-        map.put("system", "MENU.01000");
+        map.put("system", "MENU.001000");
         for (Menu m : ms) {
             if (type == m.getType()) {
                 map.put(m.getPermission(), m.getName());
